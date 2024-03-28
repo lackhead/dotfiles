@@ -50,7 +50,7 @@ function cd () {
   builtin cd "$@" && ls
 }
 # Dotfile configs- see http://www.github.com/lackhead/dotfiles
-alias dotconf='/usr/bin/git --git-dir=$HOME/.git_dotconf/ --work-tree=$HOME'
+alias dotconf='/usr/bin/git --git-dir=${HOME}/.dotconf/ --work-tree=$HOME'
 
 
 
