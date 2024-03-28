@@ -50,8 +50,11 @@ rm -rf ${HOME}/dotfiles_temp
 # set up the alias (could also just restart the shell or source .zshenv)
 alias dotconf='/usr/bin/git --git-dir=${HOME}/.dotconf/ --work-tree=${HOME}'
 
-# make sure it doesn't freak out abou everything else in my home directory
+# make sure it doesn't freak out abou everything else in my home directory, and ignores LICENSE/README.md
 dotconf config status.showUntrackedFiles no
+dotconf sparse-checkout set
+cat "README.md" >> ${HOME}/.dotconf/info/sparse-checkout
+cat "LICENSE" >> ${HOME}/.dotconf/info/sparse-checkout
 ```
 
 ## General Usage
