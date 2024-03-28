@@ -1,0 +1,2 @@
+syntax off
+set smartcase
