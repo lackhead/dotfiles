@@ -38,24 +38,13 @@ Note that I do have the `dotconf` alias in my `.zshenv` file- this is just to ma
 
 
 ## To Get Dotfiles on a New Machine
-If you want to get started using this on a new machine somewhere, the general ideas is to clone the repo, copy the files into place, then remove the working directory (the `~/.dotconf` directory, which git uses, remains): 
+If you want to get started using this on a new machine somewhere, the general ideas is to clone the repo, copy the files into place, remove the working directory (the `~/.dotconf` directory, which git uses, remains), and tailor the repo to only care about the dot files in the repo (ignoring everything else in my home directory as well as the README.md/LICENSE file in the repo): 
 ```
-# clone the repo into a temporary directory (assuming ~/dotfile_temp is not already in use!)
 git clone --separate-git-dir=${HOME}/.dotconf git@github.com:lackhead/dotfiles ${HOME}/dotfiles_temp
-
-# copy over the files
 rsync --archive --verbose --exclude '.git' --exclude README.md --exclude LICENSE dotfiles_temp/ ${HOME}/
-
-# remove the temp directory
 rm -rf ${HOME}/dotfiles_temp
-
-# set up the alias (could also just restart the shell or source .zshenv)
 alias dotconf='/usr/bin/git --git-dir=${HOME}/.dotconf/ --work-tree=${HOME}'
-
-# make sure it doesn't freak out abou everything else in my home directory
 dotconf config status.showUntrackedFiles no
-
-# make sure it ignores the missing README.md and LICENSE files
 dotconf update-index --assume-unchanged README.md LICENSE
 ```
 
