@@ -1,6 +1,6 @@
 # Chad's Linux Config files
 
-This is my collection of dotfiles for `zsh`, `vim`, and `iTerm2`. The general concept I follow is a pretty common one– using a bare git repo (stored in `~/.dotconf`) with the work tree pointed at my home directory. I find this pretty easy to use- no special tools/scripts (just an alias), no symlinks to manage, version control, and easy replication. You can also edit any dot file directly on whatever box you may be using and can easily merge it back into this repo using standard `git` commands if desired.  Also, I use this as a sparse tree so that I can ignore non-dotfile files (e.g. README.md) that I want to have in the repo but aren't used for configs; the only upshot here is that when using `git add` you need to remember to include a `--sparse` flag 
+This is my collection of dotfiles for `zsh`, `vim`, and `iTerm2`. The general concept I follow is a pretty common one– using a bare git repo (stored in `~/.dotconf`) with the work tree pointed at my home directory. I find this pretty easy to use- no special tools/scripts (just an alias), no symlinks to manage, version control, and easy replication. You can also edit any dot file directly on whatever box you may be using and can easily merge it back into this repo using standard `git` commands if desired.  
 
 ## The Initial Repo Build
 Here are the commands I used to create this repo: 
@@ -16,6 +16,8 @@ dotconf config status.showUntrackedFiles no
 
 # make sure git doesn't suck up its own directory
 echo ".dotconf" >> .gitignore
+echo "README.md" >> .gitignore
+echo "LICENSE" >> .gitignore
 ```
 Then, for each dot file: 
 ```
@@ -53,9 +55,9 @@ alias dotconf='/usr/bin/git --git-dir=${HOME}/.dotconf/ --work-tree=${HOME}'
 # make sure it doesn't freak out abou everything else in my home directory
 dotconf config status.showUntrackedFiles no
 
-# set to sparse checkout so we can ignore non-dotfiles 
-dotconf sparse-checkout set '!README.md' '!LICENSE'
+# make sure it ignores the missing README.md and LICENSE files
+dotconf update-index --assume-unchanged README.md LICENSE
 ```
 
 ## General Usage
-Go ahead and update dotfiles as you see fit on whatever box you happen to be working on and use standard `git` techniques to manage the canonical copies in the repo. If you want to add more files, just do the same `dotconf add --sparse <filename>` and commit/push as above. 
+Go ahead and update dotfiles as you see fit on whatever box you happen to be working on and use standard `git` techniques to manage the canonical copies in the repo. If you want to add more files, just use `dotconf` to do the `add`/`commit`/`push` as per normal. 
