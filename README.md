@@ -38,6 +38,9 @@ Note that I do have the `dotconf` alias in my `.zshenv` file- this is just to ma
 
 
 ## To Get Dotfiles on a New Machine
+
+**NOTE:** There is a script in my [userconfig](http://www.github.com/lackhead/userconfig) repo that does this for you. 
+
 If you want to get started using this on a new machine somewhere, the general ideas is to clone the repo, copy the files into place, remove the working directory (the `~/.dotconf` directory, which git uses, remains), and tailor the repo to only care about the dot files in the repo (ignoring everything else in my home directory as well as the README.md/LICENSE file in the repo): 
 ```
 git clone --separate-git-dir=${HOME}/.dotconf git@github.com:lackhead/dotfiles ${HOME}/dotfiles_temp
