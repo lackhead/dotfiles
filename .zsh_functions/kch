@@ -1,0 +1,21 @@
+#
+# kch() - get ssh-agent running
+#
+# ARGUMENTS: <none>  
+#
+# NOTE: this isn't don't automatically as I don't want agents floating around 
+#       everywhere- an agent will only be started specifically when I start one.
+#       BUT- if I land on a host where an agent is running, it should connect 
+#       automatically (hence, source the keychain file if it exists) 
+#
+# NOTE: include AddKeysToAgent in ~/.ssh/config to have them automatically added 
+#       to the agent upon first use
+#
+
+# kch just starts up keychain if necessary and sources the ENVVAR file
+$( type -p keychain 2>&1 >/dev/null )  ||
+   { printf "keychain executable not found\n" && return 1; }
+keychain --host ${HOST} 
+if [ -f ~/.keychain/${HOST}-sh ]; then
+   source ~/.keychain/${HOST}-sh;
+fi 

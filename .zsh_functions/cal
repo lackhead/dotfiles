@@ -1,0 +1,139 @@
+
+#
+# cal - the standard cal plus a few additions:
+#   * handle month names, including "now"
+#   * handle ranges of months
+#   * interpret an arg <= 12 as month instead of a year
+#     back in Roman times
+#
+
+function conv_to_num ()
+{
+    local arg=$1
+    if [[ $arg =~ ^[[:digit:]]+$ ]]; then
+       echo $arg
+    else
+       arg=`echo $arg | sed 's/\(...\).*/\1/' | tr '[:upper:]' '[:lower:]'`
+       case "$arg" in
+           "now") echo `date +'%m' | sed 's/^0//'` ;;
+           "jan") echo 1 ;;
+           "feb") echo 2 ;;
+           "mar") echo 3 ;;
+           "apr") echo 4 ;;
+           "may") echo 5 ;;
+           "jun") echo 6 ;;
+           "jul") echo 7 ;;
+           "aug") echo 8 ;;
+           "sep") echo 9 ;;
+           "oct") echo 10 ;;
+           "nov") echo 11 ;;
+           "dec") echo 12 ;;
+           *) echo "\"$arg\" doesn't make sense as a month or a year" >&2 && return 1 ;;
+       esac
+    fi
+}
+
+function cal () 
+{
+    # simplest case- no args
+    if [ $# -eq 0 ]; then
+        /usr/bin/cal && return
+    fi
+
+    # or too many args
+    if [ $# -gt 2 ]; then
+        echo "Usage: $0 [ month ] [ year ]" >&2 && return
+    fi
+
+    # did they specify a year?
+    if [ $# -eq 2 ]; then
+        year=$2
+    fi
+
+    # first arg is one of:
+    #    a month range (presence of -)
+    #    a month (string or number <= 12)
+    #    a year (any other number)
+    arg=$1
+
+    # No dash? It's either a month or a year
+    if ! `echo $arg | grep -q '-' >/dev/null`; then
+        arg=$(conv_to_num $arg)
+        if [ ! $? -eq 0 ]; then
+           return $?
+        fi
+        if (( $arg > 12 )); then
+            # easy case, just a year
+            /usr/bin/cal $arg
+            return
+        else
+            # ah, so we have a month
+            #  - if already given a year, we know what to do
+            if [ ! -z "$year" ]; then
+               /usr/bin/cal -m ${arg} ${year}
+               return
+            fi
+            #  - if we don't have a year, default to current year
+            year=`/bin/date "+%Y"`
+            # and we always start with the next occurrence of the starting month
+            curmon=`/bin/date "+%m"`
+            if (( $curmon > $arg )); then
+                ((year++))
+            fi
+            /usr/bin/cal -m $arg ${year}
+            return
+        fi
+    fi
+
+    # OK, we have a range
+    startmon=`echo $arg | sed 's/-.*//'`
+    endmon=`echo $arg | sed 's/.*-//'`
+    # error if either is missing
+    if [ -z "$startmon" -o -z "$endmon" ]; then
+        echo "Invalid date range: $arg"
+        return 1
+    fi
+
+    # make sure they get converted to numbers
+    startmon=$(conv_to_num $startmon)
+    if [ ! $? -eq 0 ]; then
+       return $?
+    fi
+    endmon=$(conv_to_num $endmon)
+    if [ ! $? -eq 0 ]; then
+       return $?
+    fi
+    # and that they are <= 12
+    if [ "$startmon" -gt 12 ]; then
+       echo "Invalid month: $startmon"
+    fi
+    if [ ! $? -eq 0 ]; then
+       return $?
+    fi
+
+    # Fill in the year if needed
+    if [ -z ${year} ]; then
+       year=`/bin/date "+%Y"`
+       # and we always start with the next occurrence of the starting month
+       curmon=`/bin/date "+%m"`
+       if (( $curmon > $startmon )); then
+           ((year++))
+       fi
+    fi
+
+    # figure out how many months we need to print out
+    monrange=$(( $endmon - $startmon ))
+    # do we need to wrap the year?
+    if (( $monrange <= 0 )); then
+       monrange=$(( $monrange + 12 ))
+    fi
+
+    # do it
+    /usr/bin/cal -m $startmon -A $monrange $year
+
+}
+
+# Finally run the redefined function with the same arguments as the current
+# run. If this is left out, the functionality implemented by the newly
+# defined "cal" function is not executed upon its first call. So:
+cal "$@"
