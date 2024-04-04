@@ -52,44 +52,9 @@ function cd () {
 alias dotconf='/usr/bin/git --git-dir=${HOME}/.dotconf/ --work-tree=$HOME'
 
 
-
-#############
-# functions #
-#############
-#
-# blogify - turn images into thumbnails
-# 
-blogify() {
-   for file in $*; do
-      /usr/bin/sips -Z 800 -s format jpeg $file --out ${file%.*}.TN.jpg
-   done
-}
-
-
-#
-# kch - get ssh-agent running
-# NOTE: this isn't don't automatically as I don't want agents floating around 
-#       everywhere- an agent will only be started specifically when I start one.
-#       BUT- if I land on a host where an agent is running, it should connect 
-#       automatically (hence, source the keychain file if it exists) 
-# NOTE: include AddKeysToAgent in ~/.ssh/config to have them automatically added 
-#       to the agent upon first use
-#
-kch() {
-   # 
-   # kch just starts up keychain if necessary and sources the ENVVAR file
-   local keychain=$( type -p keychain | awk '{ print $NF }');
-   ${keychain} --host ${HOST} 
-   if [ -f ~/.keychain/${HOST}-sh ]; then
-      source ~/.keychain/${HOST}-sh;
-   fi 
-}
-# If an agent already exists, make sure every shell knows about it
-if [ -f ~/.keychain/${HOST}-sh ]; then
-   source ~/.keychain/${HOST}-sh;
-fi
-
-
+##############
+# PATH stuff #
+##############
 #
 # pathmunge - add/remote a directory from PATH
 # 
@@ -152,12 +117,8 @@ pathmunge() {
    fi
 }
 
-
-
-
-##############
-# PATH stuff #
-##############
+# 
+# Set up path
 # Note that Library/Python/3.6/bin is for homebrew installed python3 on MacOS
 for dir in /usr/local/linkedin/bin /usr/local/{s,}bin ~/Library/Python/3.6/bin ~/bin; do
    if [[ -d $dir ]]; then
@@ -165,5 +126,15 @@ for dir in /usr/local/linkedin/bin /usr/local/{s,}bin ~/Library/Python/3.6/bin ~
    fi
 done
 
-
+#
+# Set up fpath
+#
+fpath=( ~/.zsh_functions "${fpath[@]}" )
+if [[ -d "${HOME}/.zsh_functions" ]]; then
+   # Autoload shell functions with the executable bit on.
+   for func in ${HOME}/.zsh_functions/*(N-.x:t); do
+      unhash -f $func 2>/dev/null
+      autoload -Uz  $func
+   done
+fi
 
