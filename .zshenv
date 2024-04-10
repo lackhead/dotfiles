@@ -19,12 +19,12 @@ setopt magicequalsubst
 
 
 
-###########
-# Aliases #
-###########
+################################
+# Aliases and simple functions #
+################################
+# freload() - for all args, reload the autoloaded function
+freload() { while (( $# )); do; unfunction $1; autoload -U $1; shift; done }
 alias pwds='gpg --decrypt ~clake/private/passes.gpg | less'
-# Who uses this box? 
-alias wutb=`last | head -n -2 | awk '{ print $1 }' | grep -v reboot |  sort | uniq -c`
 alias h='history'
 alias rm='rm -i'
 alias dig='dig +search +noall +answer $*'
