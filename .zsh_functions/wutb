@@ -17,8 +17,6 @@ last | while IFS= read -r line; do
       # last line, print out the start time
       echo "$line:" | sed 's/wtmp begins/Since/'
       # and the counts in sorted order
-    #  for u in "${!usercounts[@]}"; do printf '%s\t%s\n' "$usercounts[${u}]" "${u}"; done
-
       for u v in "${(@kv)usercounts}"; do printf '  %s\t%s\n' $v $u; done | sort -nr 
 
    else
