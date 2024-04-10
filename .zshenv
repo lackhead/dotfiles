@@ -23,14 +23,24 @@ setopt magicequalsubst
 # Aliases #
 ###########
 alias pwds='gpg --decrypt ~clake/private/passes.gpg | less'
+# Who uses this box? 
+alias wutb=`last | head -n -2 | awk '{ print $1 }' | grep -v reboot |  sort | uniq -c`
 alias h='history'
 alias rm='rm -i'
 alias dig='dig +search +noall +answer $*'
+# get ls to be pretty
 alias ls='ls -F'
+if $(ls -G /tmp  2>&1 >/dev/null); then
+   alias ls='ls -FG'
+else 
+   # look for the coreutils version of ls
+   if $(type -p gls 2>&1 >/dev/null); then
+      alias ls='gls -FG'
+   fi
+fi
 alias git_branch='(command git symbolic-ref -q HEAD || command git name-rev --name-only --no-undefined --always HEAD) 2>/dev/null'
 # Mac specific stuff
 if [[ $(uname -s) == "Darwin" ]]; then
-    alias ls='ls -FG'
     alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
     alias update_mac_software='/usr/bin/sudo /usr/sbin/softwareupdate -ir --verbose'
     # let's use python3
@@ -119,8 +129,8 @@ pathmunge() {
 
 # 
 # Set up path
-# Note that Library/Python/3.6/bin is for homebrew installed python3 on MacOS
-for dir in /usr/local/linkedin/bin /usr/local/{s,}bin ~/Library/Python/3.6/bin ~/bin; do
+#
+for dir in /usr/local/{s,}bin /opt/homebrew/bin ~/bin ; do
    if [[ -d $dir ]]; then
       pathmunge $dir before
    fi
