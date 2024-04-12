@@ -32,7 +32,7 @@ alias dig='dig +search +noall +answer $*'
 # Default ls 
 alias ls='ls -Fh'
 # Do we have GNU ls? 
-if $(ls --group-directories-first /tmp  2>&1 >/dev/null); then
+if $( ls --group-directories-first /tmp >/dev/null 2>&1 ); then
    alias ls='ls --group-directories-first -Fh'
 else 
    # look for the coreutils version of ls
