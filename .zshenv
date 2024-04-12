@@ -29,13 +29,15 @@ alias h='history'
 alias rm='rm -i'
 alias dig='dig +search +noall +answer $*'
 # get ls to be pretty
-alias ls='ls -F'
-if $(ls -G /tmp  2>&1 >/dev/null); then
-   alias ls='ls -FG'
+# Default ls 
+alias ls='ls -Fh'
+# Do we have GNU ls? 
+if $(ls --group-directories-first /tmp  2>&1 >/dev/null); then
+   alias ls='ls --group-directories-first -Fh'
 else 
    # look for the coreutils version of ls
    if $(type -p gls 2>&1 >/dev/null); then
-      alias ls='gls -FG'
+      alias ls='gls --group-directories-first -Fh'
    fi
 fi
 alias git_branch='(command git symbolic-ref -q HEAD || command git name-rev --name-only --no-undefined --always HEAD) 2>/dev/null'
