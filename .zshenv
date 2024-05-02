@@ -8,7 +8,6 @@
 #########################################
 
 
-
 ##############################################
 # Set up environment (variables and options) #
 ##############################################
@@ -16,6 +15,13 @@
 export LESS="-qeRiFX"
 # enable filename expansion for arguments of the form ‘anything=expression’
 setopt magicequalsubst
+# On Ubuntu systems, setting this variable will skip the automatic compinit 
+# load (in /etc/zsh/zshrc).  While this means we will have to do so our own
+# damn self, it does mean that we can do so with the -u flag to skip insecure
+# directory checks when using sudo (it will complain that /home/clake is not 
+# owned by root!).  So, deal with this ourselves so that the right thing can 
+# be done
+skip_global_compinit=1
 
 
 
