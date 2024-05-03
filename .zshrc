@@ -27,11 +27,16 @@ bindkey -e
 ###########
 # HISTORY #
 ###########
-HISTFILE=~/.zsh_history				# Where to keep history info
-HISTSIZE=10000						# number of commands to keep in memory (for use by zsh)
-SAVEHIST=100000						# number of commands to keep in the HISTFILE
-setopt INC_APPEND_HISTORY			# Append history as commands are executed, not when shell exits
-setopt HIST_IGNORE_ALL_DUPS			# Don't need to save duplicated commands
+# When sudo'ing, keep all the history in root's .zsh_history file
+if [[ $UID == 0 || $EUID == 0 ]]; then
+    export HISTFILE=/root/.zsh_history
+else
+    export HISTFILE=~/.zsh_history
+fi
+export HISTSIZE=10000			# number of commands to keep in memory (for use by zsh)
+export SAVEHIST=100000			# number of commands to keep in the HISTFILE
+setopt INC_APPEND_HISTORY		# Append history as commands are executed, not when shell exits
+setopt HIST_IGNORE_ALL_DUPS		# Don't need to save duplicated commands
 setopt EXTENDED_HISTORY          	# Write the history file in the ':start:elapsed;command' format.
 setopt SHARE_HISTORY             	# Share history between all sessions.
 setopt HIST_EXPIRE_DUPS_FIRST    	# Expire a duplicate event first when trimming history.
