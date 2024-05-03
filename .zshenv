@@ -22,6 +22,10 @@ setopt magicequalsubst
 # owned by root!).  So, deal with this ourselves so that the right thing can 
 # be done
 skip_global_compinit=1
+# in SCI, root has some GPG keys that get used
+if [[ $UID == 0 || $EUID == 0 ]]; then
+    export GNUPGHOME=/root/.gnupg
+fi
 
 
 
