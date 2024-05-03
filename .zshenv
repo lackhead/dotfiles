@@ -148,15 +148,40 @@ for dir in /usr/local/{s,}bin /opt/homebrew/bin ~/bin ; do
    fi
 done
 
-#
-# Set up fpath
-#
-fpath=( ~/.zsh_functions "${fpath[@]}" )
-if [[ -d "${HOME}/.zsh_functions" ]]; then
-   # Autoload shell functions with the executable bit on.
-   for func in ${HOME}/.zsh_functions/*(N-.x:t); do
-      unhash -f $func 2>/dev/null
-      autoload -Uz  $func
-   done
+
+
+################
+# Set up fpath #
+################
+for fdir in ${HOME}/.zsh_functions; do
+   if [[ -d ${fdir} ]]; then
+      fpath=( ${fdir} "${fpath[@]}" )
+      # Autoload shell functions with the executable bit on.
+      for func in ${fdir}/*(N-.x:t); do
+         unhash -f $func 2>/dev/null
+         autoload -Uz  $func
+      done
+   fi
+done
+
+
+
+#######################
+# SCI specific things #
+#######################
+# root has some GPG keys that get used
+if [[ $UID == 0 || $EUID == 0 ]]; then
+    export GNUPGHOME=/root/.gnupg
 fi
 
+# load SCI zsh functions
+for fdir in /sci-it/ansible/zsh_functions; do
+   if [[ -d ${fdir} ]]; then
+      fpath=( ${fdir} "${fpath[@]}" )
+      # Autoload shell functions with the executable bit on.
+      for func in ${fdir}/*(N-.x:t); do
+         unhash -f $func 2>/dev/null
+         autoload -Uz  $func
+      done
+   fi
+done
