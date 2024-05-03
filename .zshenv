@@ -30,8 +30,8 @@ skip_global_compinit=1
 ################################
 # freload() - for all args, reload the autoloaded function
 freload() { while (( $# )); do; unfunction $1; autoload -U $1; shift; done }
-alias pwds='gpg --decrypt ~clake/private/passes.gpg | less'
-alias h='history'
+alias pwds='gpg --decrypt ~clake/private/passes.gpg | less' 
+alias rr='fc -e -'
 alias rm='rm -i'
 alias dig='dig +search +noall +answer $*'
 # get ls to be pretty
