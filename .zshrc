@@ -7,12 +7,14 @@
 #                                                  #
 ####################################################
 
+
+
 ###################
 # General Options #
 ###################
-setopt nonomatch           # hide error message if there is no match for the pattern
-setopt notify              # report the status of background jobs immediately
-setopt numericglobsort     # sort filenames numerically when it makes sense
+setopt nonomatch           			# hide error message if there is no match for the pattern
+setopt notify              			# report the status of background jobs immediately
+setopt numericglobsort     			# sort filenames numerically when it makes sense
 
 
 ########################
@@ -25,22 +27,28 @@ bindkey -e
 ###########
 # HISTORY #
 ###########
-HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
-# Append history as commands are executed
-setopt inc_append_history
-# Don't save duplicates
-setopt hist_ignore_all_dups
-# Share history between terminals
-setopt share_history
+HISTFILE=~/.zsh_history				# Where to keep history info
+HISTSIZE=10000						# number of commands to keep in memory (for use by zsh)
+SAVEHIST=100000						# number of commands to keep in the HISTFILE
+setopt INC_APPEND_HISTORY			# Append history as commands are executed, not when shell exits
+setopt HIST_IGNORE_ALL_DUPS			# Don't need to save duplicated commands
+setopt EXTENDED_HISTORY          	# Write the history file in the ':start:elapsed;command' format.
+setopt SHARE_HISTORY             	# Share history between all sessions.
+setopt HIST_EXPIRE_DUPS_FIRST    	# Expire a duplicate event first when trimming history.
+setopt HIST_IGNORE_DUPS          	# Do not record an event that was just recorded again.
+setopt HIST_IGNORE_ALL_DUPS      	# Delete an old recorded event if a new event is a duplicate.
+setopt HIST_FIND_NO_DUPS         	# Do not display a previously found event.
+setopt HIST_SAVE_NO_DUPS         	# Do not write a duplicate event to the history file.
+setopt HIST_VERIFY              	# Do not execute immediately upon history expansion.
+setopt APPEND_HISTORY            	# append to history file
+
 
 
 ##################
 # Autocompletion #
 ##################
 # autoload -U compinit
-# compinit -i
+# compinit
 # matches case insensitive for lowercase
 # zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 # pasting with tabs doesn't perform completion
