@@ -139,6 +139,7 @@ pathmunge() {
    fi
 }
 
+
 # 
 # Set up path
 #
@@ -147,7 +148,6 @@ for dir in /usr/local/{s,}bin /opt/homebrew/bin ~/bin ; do
       pathmunge $dir before
    fi
 done
-
 
 
 ################
@@ -173,6 +173,13 @@ done
 if [[ $UID == 0 || $EUID == 0 ]]; then
     export GNUPGHOME=/root/.gnupg
 fi
+
+# Get SCI specific directories 
+for dir in /sci-it/{,s}bin ; do
+   if [[ -d $dir ]]; then
+      pathmunge $dir before
+   fi
+done
 
 # load SCI zsh functions
 for fdir in /sci-it/ansible/zsh_functions; do
