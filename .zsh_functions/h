@@ -1,3 +1,10 @@
+#
+# h() - a quick wrapper for ZSH's hisotry
+#
+# ARGUMENTS: all passed on to the regular history
+#
+# All this does is treat any arguments as search terms for history
+#
 function h() {
     # check if we passed any parameters
     if [ -z "$*" ]; then
