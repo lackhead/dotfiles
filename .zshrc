@@ -67,3 +67,12 @@ setopt APPEND_HISTORY            	# append to history file
 ################
 export PS1="[@%m] %(4~;../;)%3~:%(!.#.>) "
 
+
+######################
+# SCI Specific Stuff #
+######################
+# babylon is my jump host
+if [[ "$HOST" == "babylon" ]]; then
+   # load up ssh-agent
+   kch
+fi
