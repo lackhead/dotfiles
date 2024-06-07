@@ -71,8 +71,8 @@ export PS1="[@%m] %(4~;../;)%3~:%(!.#.>) "
 ######################
 # SCI Specific Stuff #
 ######################
-# babylon is my jump host
-if [[ "$HOST" == "babylon" ]]; then
+# babylon is my jump host (but only me)
+if [[ "$HOST" == "babylon" && "$EUID" != "0" ]]; then
    # load up ssh-agent
    kch
 fi
