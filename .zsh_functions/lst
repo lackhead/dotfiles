@@ -1,0 +1,31 @@
+#
+# lst() - ls top <X> items by last updated
+#
+# ARGUMENTS: things to list, if first arg is a digit, show that many for each item
+#
+#
+
+function lst() {
+
+  # configuration variables
+  NUMSHOW=10
+
+  # if first arg is a digit, that's the number of top things to show
+  if [[ "$1" =~ '^[0-9]+$' ]]; then
+     NUMSHOW=$1
+     shift
+  fi
+
+  # default is current dir
+  if [[ $# -eq 0 ]]; then
+     echo ">>>" $( pwd ) "<<<"
+     \ls -ltAFh . | tail -n +2 | head -$NUMSHOW
+  else 
+     for item in "$@"; do
+        echo ">>> $item <<< " 
+        \ls -ltAFh $item | tail -n +2 | head -$NUMSHOW
+        echo
+     done
+  fi 
+
+}
