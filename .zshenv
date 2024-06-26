@@ -22,11 +22,6 @@ setopt magicequalsubst
 # owned by root!).  So, deal with this ourselves so that the right thing can 
 # be done
 skip_global_compinit=1
-# in SCI, root has some GPG keys that get used
-if [[ $UID == 0 || $EUID == 0 ]]; then
-    export GNUPGHOME=/root/.gnupg
-fi
-
 
 
 ################################
@@ -37,6 +32,7 @@ freload() { while (( $# )); do; unfunction $1; autoload -U $1; shift; done }
 alias pwds='gpg --decrypt ~clake/private/passes.gpg | less' 
 alias rr='fc -e -'
 alias rm='rm -i'
+alias tma='tmux -CC attach $*'
 alias dig='dig +search +noall +answer $*'
 # get ls to be pretty
 # Default ls 
@@ -177,26 +173,13 @@ if [[ $( hostname -f ) == *".sci.utah.edu" ]]; then
   fi
   
   # Get SCI specific directories 
-  for dir in /sci-it/{,s}bin ; do
+  for dir in /sci-it/{,s}bin /sci-it/ansible/bin; do
      if [[ -d $dir ]]; then
         pathmunge $dir before
      fi
   done
   
-  # load SCI zsh functions
-  for fdir in /sci-it/ansible/zsh_functions; do
-     if [[ -d ${fdir} ]]; then
-        fpath=( ${fdir} "${fpath[@]}" )
-        # Autoload shell functions with the executable bit on.
-        for func in ${fdir}/*(N-.x:t); do
-           unhash -f $func 2>/dev/null
-           autoload -Uz  $func
-        done
-     fi
-  done
-  
-fi 
+  # Specific SCI aliases 
+  alias sci-ssh="ssh -A -J shell.sci.utah.edu -p 5522 $*"
 
-# Specific SCI aliases 
-alias sci-ssh="ssh -A -J shell.sci.utah.edu -p 5522 $*"
-
+fi
