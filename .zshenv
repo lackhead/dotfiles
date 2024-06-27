@@ -179,7 +179,8 @@ if [[ $( hostname -f ) == *".sci.utah.edu" ]]; then
      fi
   done
   
-  # Specific SCI aliases 
-  alias sci-ssh="ssh -A -J shell.sci.utah.edu -p 5522 $*"
-
 fi
+
+# For accessing SCI from off campus
+alias sci-ssh='ssh -A -J ssh://shell.sci.utah.edu:5522 $*'
+
