@@ -32,7 +32,6 @@ freload() { while (( $# )); do; unfunction $1; autoload -U $1; shift; done }
 alias pwds='gpg --decrypt ~clake/private/passes.gpg | less' 
 alias rr='fc -e -'
 alias rm='rm -i'
-alias tma='tmux -CC attach $*'
 alias dig='dig +search +noall +answer $*'
 # get ls to be pretty
 # Default ls 

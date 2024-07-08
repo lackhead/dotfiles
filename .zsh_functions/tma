@@ -1,0 +1,19 @@
+#
+# tma() - TMUX connections back to Iterm2
+#
+
+
+function tma() {
+
+   targ=""
+
+   # if first arg is a digit, that's the number of top things to show
+   if [[ "$1" =~ '^[0-9]+$' ]]; then
+      targ="$1"
+      shift
+      tmux -CC attach -t $targ $@
+   else
+      tmux -CC attach $@
+   fi 
+
+}
