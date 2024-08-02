@@ -7,7 +7,7 @@ function flushdns() {
 
    # In case we aren't already root
    sudocmd="sudo" 
-   [[ $UID == 0 || $EUID == 0 ]] && sudocmd=""
+   [[ $UID == 0 || $EUID == 0 ]] && sudocmd=
 
    # Mac or Linux? 
    HOSTOS=$( uname -s )
@@ -21,7 +21,7 @@ function flushdns() {
          [[ "$( systemctl is-active systemd-resolved )" == "active" ]] && $sudocmd resolvectl flush-caches
          retval=$?
          # check for nscd
-         $( ps -ef | grep -v grep | grep nscd ) && $sudocmd nscd -i hosts 
+         ps -ef | grep -v grep | grep nscd >/dev/null && $sudocmd nscd -i hosts 
          retval=$( expr $retval + $? )
          return $retval
          ;;
