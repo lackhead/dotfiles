@@ -56,8 +56,6 @@ if [[ $(uname -s) == "Darwin" ]]; then
        alias py='/usr/local/bin/python3'
        alias pip='/usr/local/bin/pip3'
     fi
-    # Flush DNS cache
-    alias flushdns="dscacheutil -flushcache"
     # Recursively delete `.DS_Store` files
     alias cleanup_dsstore="find . -name '*.DS_Store' -type f -ls -delete"
 fi
