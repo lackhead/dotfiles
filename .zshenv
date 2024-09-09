@@ -160,6 +160,19 @@ done
 
 
 #######################
+# Pyenv Configuration #
+#######################
+if [[ -d "$HOME/.pyenv" && $EUID != 0 ]]; then 
+   export PYENV_ROOT="$HOME/.pyenv"
+   [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+   eval "$(pyenv init -)"
+   # pyenv-virtualenv
+   # eval "$(pyenv virtualenv-init -)"
+fi
+
+
+
+#######################
 # SCI specific things #
 #######################
 if [[ $( hostname -f ) == *".sci.utah.edu" ]]; then
