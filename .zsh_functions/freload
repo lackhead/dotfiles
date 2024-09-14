@@ -1,0 +1,15 @@
+#
+# freload() - reload autoloaded function(s)
+#
+# ARGUMENTS: function names
+#
+
+function freload() {
+
+  while (( $# )); do
+    unfunction $1
+    autoload -U $1
+    shift
+  done
+
+}

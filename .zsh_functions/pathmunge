@@ -1,0 +1,60 @@
+#
+# pathmunge - add/remove a directory to/from PATH
+# 
+pathmunge() {
+   #
+   #
+   # Usage:
+   #   pathmunge <dir> [before]
+   #
+   #      This appends <dir> to the path array; if a second argument exists and is the string "before"
+   #      then <dir> is prepended instead of appended.
+   #
+   #   pathmunge -r <dir>
+   #
+   #      In this usage the directory is removed from the path if it exists.
+   #
+
+   # do we have anything to do?
+   if [[ $# -eq 0 ]]; then
+      return
+   fi
+
+   # Are we removing or not?
+   if [[ $1 == "-r" ]]; then
+      shift
+      local remove=1
+   fi
+
+   # make sure directory exists and is not already in PATH
+   # before adding it in.
+   local dirtoadd=$1
+   local position=$2
+   if [[ -d $dirtoadd ]]; then
+
+       # remove any previous occurrence of $dirtoadd
+       path=("${(@)path:#${dirtoadd}}")
+
+       # exit if that's all they wanted us to do
+       if [[ $remove -eq 1 ]]; then
+          return
+       fi
+
+       # add the new entry; note that I am using () expansion so that
+       # any null entries are removed (possibly created in the line above)
+       if [[ "$position" == "before" ]]; then
+          path=($dirtoadd $path)
+       else
+          path=($path $dirtoadd)
+       fi
+
+       # de-dupe just in case
+       typeset -gU path
+
+   else
+
+       # echo "No such directory: $1" >&2
+       return 1
+
+   fi
+}
