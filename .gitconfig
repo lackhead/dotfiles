@@ -1,0 +1,10 @@
+[user]
+	email = clake@lackhead.org
+	name = Chad Lake
+
+[init]
+	defaultBranch = main
+
+[core]
+	editor = nvim	
+
