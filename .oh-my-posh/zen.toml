@@ -5,7 +5,7 @@
 
 version = 2
 final_space = true
-console_title_template = '{{ .UserName }} in {{ .PWD }}'
+console_title_template = '{{ if .Root }}ROOT{{else}}{{ .UserName }}{{end}} in {{ .PWD }}'
 
 [[blocks]]
   type = 'prompt'
@@ -15,9 +15,12 @@ console_title_template = '{{ .UserName }} in {{ .PWD }}'
   [[blocks.segments]]
     type = 'session'
     style = 'plain'
-    template = '{{ if .SSHSession }} {{ end }}{{ .UserName }}@{{ .HostName }}'
+    template = '{{ if .Root }}ROOT{{else}}{{ .UserName }}{{end}}@{{ .HostName }}'
     foreground = 'yellow'
     background = 'transparent'
+    foreground_templates = [
+        "{{if .Root}}red{{end}}",
+    ]
 
   [[blocks.segments]]
     type = 'git'
