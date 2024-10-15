@@ -8,6 +8,7 @@
 ####################################################
 
 
+
 # Here are a few nice things to have installed, although this
 # set up should hopefully do the right thing if they are not
 # installed: 
@@ -15,10 +16,12 @@
 #   fd           -- a better find
 #   fzf          -- tab completion 
 #   git          -- for zinit installation
-#   oh-my-posh   -- fancy prompt
 #   ripgrep      -- better grep, also used with fzf
 #   thefuck      -- fixing past mistakes
 #   zoxide       -- a better cd
+
+# Profiling (also see EOF) 
+# zmodload zsh/zprof
 
 
 
@@ -50,11 +53,30 @@ VISUAL=$( command -v nvim 2>/dev/null \
 
 
 
+<<<<<<< HEAD
 ##############
 ## Packages ##
 ##############
 # This avoids a package manager, as they all seem to have issues
 ZSH_PKGS_DIR="${HOME}/.zsh_pkgs"
+=======
+###########
+## ZINIT ##
+###########
+# # # Main directory for zinit
+# ZINIT_HOME="${HOME}/.zinit/zinit"
+# # # Setup if necessary
+# [ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
+# [ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+# # # Load zinit
+# source "${ZINIT_HOME}/zinit.zsh"
+# # # remove zi as a zinit alias, as it squashes zi from zoxide
+# unalias zi   		
+# # # add in plugins
+# type fzf &> /dev/null && zinit light Aloxaf/fzf-tab
+# zinit light zsh-users/zsh-completions
+# zinit light zsh-users/zsh-autosuggestions
+>>>>>>> a7f9c1e (decluttering zshrc)
 
 # fzf-tab (if fzf is installed)
 if type fzf &> /dev/null; then
@@ -87,13 +109,8 @@ fi
 ################
 # prompt stuff #
 ################
-# this is for any system that doesn't have oh-my-posh on it
-# (just in case)
-export PS1="[@%m] %(4~;../;)%3~:%(!.#.>) "
-# Apple terminal is not supported by oh-my-posh
-if [ "${TERM_PROGRAM}" != "Apple Terminal" ] && type oh-my-posh &> /dev/null 2>&1; then
-     eval "$(oh-my-posh init zsh --config ${HOME}/.oh-my-posh/zen.toml)"
-fi
+export PS1='%(!.%F{red}[ROOT.%F{blue}[)@%m]%f %F{#ff875f}%(3~;../;)%2~:%(!.#.>)%f '
+export PS2='%F{#ff875f}%_>%f '
 
 
 
@@ -113,6 +130,7 @@ elif type batcat &> /dev/null; then
    BAT_THEME="Solarized (dark)"
 fi
 type thefuck &> /dev/null && eval $(thefuck --alias) 
+type fdfind &> /dev/null && alias find=fdfind
 type fd &> /dev/null && alias find=fd
 
 
@@ -130,7 +148,7 @@ export HISTSIZE=100000			# number of commands to keep in memory (for use by zsh)
 export SAVEHIST=100000			# number of commands to keep in the HISTFILE
 setopt INC_APPEND_HISTORY		# Append history as commands are executed, not when shell exits
 setopt EXTENDED_HISTORY          	# Write the history file in the ':start:elapsed;command' format.
-setopt SHARE_HISTORY             	# Share history between all sessions.
+# setopt SHARE_HISTORY             	# Share history between all sessions.
 setopt HIST_IGNORE_DUPS                 # Don't enter into history if it duplicates the previous command
 setopt HIST_FIND_NO_DUPS         	# Do not display a previously found event.
 setopt HIST_VERIFY              	# Do not execute immediately upon history expansion.
@@ -178,7 +196,14 @@ fi
 # use Zoxide for cd if it exists
 # NOTE: this has to happen 
 if type zoxide &> /dev/null; then
+
+  # reset the db if root (particularly in NFS-mounted home dirs)
+  if [ "$EUID" = "0" ]; then
+     export _ZO_DATA_DIR="/root/.local/share/zoxide"
+  fi
+
   eval "$(zoxide init --cmd cd zsh)"
+
 fi
 
 
@@ -224,3 +249,11 @@ fi
 # For accessing SCI from off campus
 alias sci-ssh='ssh -A -J ssh://shell.sci.utah.edu:5522 $*'
 
+<<<<<<< HEAD
+=======
+
+
+# Profiling (see top of file)
+# zprof
+
+>>>>>>> a7f9c1e (decluttering zshrc)
