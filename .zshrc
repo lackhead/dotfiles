@@ -45,21 +45,9 @@ if type fzf &> /dev/null; then
       export FZF_DEFAULT_COMMAND='rg --files --hidden'
    fi
 fi
-VISUAL=$( command -v nvim 2>/dev/null \
-             || command -v vim 2>/dev/null \
-             || command -v vi )
-# force LS_COLORS over ssh; iTerm2 and Solarized muck this up
-[ ${+SSH_CLIENT} ] && export LS_COLORS="di=00;34:ln=00;35:so=00;32:pi=01;33:ex=00;31:bd=00;34"
 
 
 
-<<<<<<< HEAD
-##############
-## Packages ##
-##############
-# This avoids a package manager, as they all seem to have issues
-ZSH_PKGS_DIR="${HOME}/.zsh_pkgs"
-=======
 ###########
 ## ZINIT ##
 ###########
@@ -76,34 +64,7 @@ ZSH_PKGS_DIR="${HOME}/.zsh_pkgs"
 # type fzf &> /dev/null && zinit light Aloxaf/fzf-tab
 # zinit light zsh-users/zsh-completions
 # zinit light zsh-users/zsh-autosuggestions
->>>>>>> a7f9c1e (decluttering zshrc)
 
-# fzf-tab (if fzf is installed)
-if type fzf &> /dev/null; then
-  if [ ! -d ${ZSH_PKGS_DIR}/fzf-tab ]; then
-     mkdir -p ${ZSH_PKGS_DIR}/fzf-tab
-     git clone https://github.com/Aloxaf/fzf-tab ${ZSH_PKGS_DIR}/fzf-tab
-     # need to load this AFTER compinit- see later in this file 
-  fi
-fi
-
-# zsh-completions
-if [ ! -d ${ZSH_PKGS_DIR}/zsh-completions ]; then
-   mkdir -p ${ZSH_PKGS_DIR}/zsh-completions
-   git clone https://github.com/zsh-users/zsh-completions.git \
-      ${ZSH_PKGS_DIR}/zsh-completions
-fi
-[ -d ${ZSH_PKGS_DIR}/zsh-completions ] \
-   && fpath=(${ZSH_PKGS_DIR}/zsh-completions/src $fpath)
-
-# zsh-autosuggestions
-if [ ! -d ${ZSH_PKGS_DIR}/zsh-autosuggestions ]; then
-   mkdir -p ${ZSH_PKGS_DIR}/zsh-autosuggestions
-   git clone https://github.com/zsh-users/zsh-autosuggestions \
-      ${ZSH_PKGS_DIR}/zsh-autosuggestions
-fi
-[ -f ${ZSH_PKGS_DIR}/zsh-autosuggestions/zsh-autosuggestions.zsh ] \
-   &&source ${ZSH_PKGS_DIR}/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 
 ################
@@ -123,10 +84,6 @@ alias dig='dig +search +noall +answer $*'
 alias ls='ls --color -Fh'
 if type bat &> /dev/null; then 
    alias cat='bat'
-   BAT_THEME="Solarized (dark)"
-elif type batcat &> /dev/null; then
-   # bat is installed as batcat on Ubuntu...why?!?
-   alias cat='batcat'
    BAT_THEME="Solarized (dark)"
 fi
 type thefuck &> /dev/null && eval $(thefuck --alias) 
@@ -159,7 +116,7 @@ setopt APPEND_HISTORY            	# append to history file
 ##################
 # Autocompletion #
 ##################
-autoload -Uz compinit
+autoload -U compinit
 compinit -i
 
 _comp_options+=(globdots)   # match against hidden files
@@ -179,11 +136,8 @@ zstyle ':completion:*' squeeze-slashes true
 # Colors
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
-# if we have fzf
+# Turn off menu if we have fzf
 if type fzf &> /dev/null 2>&1; then
-   # load the fzf-tab plugin, if it exists
-   [ -f ${ZSH_PKGS_DIR}/fzf-tab/fzf-tab.plugin.zsh ] \
-      && source ${ZSH_PKGS_DIR}/fzf-tab/fzf-tab.plugin.zsh
    zstyle ':completion:*' menu no
    zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color -F $realpath'
 fi
@@ -249,11 +203,8 @@ fi
 # For accessing SCI from off campus
 alias sci-ssh='ssh -A -J ssh://shell.sci.utah.edu:5522 $*'
 
-<<<<<<< HEAD
-=======
 
 
 # Profiling (see top of file)
 # zprof
 
->>>>>>> a7f9c1e (decluttering zshrc)
