@@ -7,4 +7,22 @@
 
 [core]
 	editor = nvim	
+	pager = delta
 
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true
+        line-numbers = true
+ 	features = mellow-barbet
+
+[include] 
+   	path = ~/.delta.themes
+
+[merge]
+	conflictstyle = diff3
+
+[diff]
+	colorMoved = default
+	
