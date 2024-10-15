@@ -6,7 +6,7 @@ This is my collection of the dotfiles I used for configuring my personal linux e
 
 ```
 git clone git@github.com:lackhead/dotfiles ${HOME}/.dotfiles
-stow -n -v .dotfiles -t ~
+stow -v -t ~ -d .dotfiles .
 ```
 
 If you have existing dotfiles that conflict with any of these, just copy
