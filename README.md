@@ -47,11 +47,15 @@ rsync --recursive --verbose --exclude '.git' --exclude README.md --exclude LICEN
 # remove the temp directory
 rm -rf ${HOME}/dotfiles_temp
 
-# set up the alias (could also just restart the shell or source .zshenv)
+# set up the alias (could also just restart the shell or source .zshrc)
 alias dotconf='/usr/bin/git --git-dir=${HOME}/.dotconf/ --work-tree=${HOME}'
 
 # make sure it doesn't freak out abou everything else in my home directory
 dotconf config status.showUntrackedFiles no
+
+# have it ignore the missing README.md and LICENSE files
+dotconf update-index --assume-unchanged README.md
+dotconf update-index --assume-unchanged LICENSE
 ```
 
 ## General Usage
