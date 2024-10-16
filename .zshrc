@@ -123,6 +123,8 @@ export PS2='%F{#cdd6f4}%_>%f '
 ###########
 # Aliases #
 ###########
+# this is for managing my dotfiles; see https://github.com/lackhead/dotfiles
+alias dotconf='/usr/bin/git --git-dir=${HOME}/.dotconf/ --work-tree=${HOME}'
 alias pwds='gpg --decrypt ~clake/private/passes.gpg | less'
 alias rm='rm -i'
 alias dig='dig +search +noall +answer $*'
