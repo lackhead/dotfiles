@@ -32,7 +32,7 @@ dotconf remote add origin git@github.com:lackhead/dotfiles
 # push
 dotconf push -u origin main
 ```
-Note that I do have the `dotconf` alias in my `.zshenv` file- this is just to make standard `git` things easy (e.g. `dotconf status`).
+Note that I do have the `dotconf` alias in my `.zshrc` file- this is just to make standard `git` things easy (e.g. `dotconf status`).
 
 
 ## To Get Dotfiles on a New Machine
