@@ -48,30 +48,75 @@ fi
 
 
 
-###########
-## ZINIT ##
-###########
-# # # Main directory for zinit
-# ZINIT_HOME="${HOME}/.zinit/zinit"
-# # # Setup if necessary
-# [ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
-# [ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
-# # # Load zinit
-# source "${ZINIT_HOME}/zinit.zsh"
-# # # remove zi as a zinit alias, as it squashes zi from zoxide
-# unalias zi   		
-# # # add in plugins
-# type fzf &> /dev/null && zinit light Aloxaf/fzf-tab
-# zinit light zsh-users/zsh-completions
-# zinit light zsh-users/zsh-autosuggestions
-
-
-
 ################
 # prompt stuff #
 ################
-export PS1='%(!.%F{red}[ROOT.%F{blue}[)@%m]%f %F{#ff875f}%(3~;../;)%2~:%(!.#.>)%f '
-export PS2='%F{#ff875f}%_>%f '
+# Enable substitution in the prompt.
+setopt prompt_subst
+# enable colors in the prompt
+autoload -U colors && colors 
+# construct GIT information part of prompt, if in a repo
+function git_info() {
+
+  # Taken from Josh Dick w/ only cosmetic changes
+  # https://joshdick.net/2017/06/08/my_git_prompt_for_zsh_revisited.html
+
+  # Exit if not inside a Git repository
+  ! git rev-parse --is-inside-work-tree > /dev/null 2>&1 && return
+
+  # Git branch/tag, or name-rev if on detached head
+  local GIT_LOCATION=${$(git symbolic-ref -q HEAD || git name-rev --name-only --no-undefined --always HEAD)#(refs/heads/|tags/)}
+
+  local AHEAD="%{$fg[red]%}⇡NUM%{$reset_color%}"
+  local BEHIND="%{$fg[cyan]%}⇣NUM%{$reset_color%}"
+  local MERGING="%{$fg[magenta]%}⚡︎%{$reset_color%}"
+  local UNTRACKED="%{$fg[red]%}●%{$reset_color%}"
+  local MODIFIED="%{$fg[yellow]%}●%{$reset_color%}"
+  local STAGED="%{$fg[green]%}●%{$reset_color%}"
+
+  local -a DIVERGENCES
+  local -a FLAGS
+
+  local NUM_AHEAD="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
+  if [ "$NUM_AHEAD" -gt 0 ]; then
+    DIVERGENCES+=( "${AHEAD//NUM/$NUM_AHEAD}" )
+  fi
+
+  local NUM_BEHIND="$(git log --oneline ..@{u} 2> /dev/null | wc -l | tr -d ' ')"
+  if [ "$NUM_BEHIND" -gt 0 ]; then
+    DIVERGENCES+=( "${BEHIND//NUM/$NUM_BEHIND}" )
+  fi
+
+  local GIT_DIR="$(git rev-parse --git-dir 2> /dev/null)"
+  if [ -n $GIT_DIR ] && test -r $GIT_DIR/MERGE_HEAD; then
+    FLAGS+=( "$MERGING" )
+  fi
+
+  if [[ -n $(git ls-files --other --exclude-standard 2> /dev/null) ]]; then
+    FLAGS+=( "$UNTRACKED" )
+  fi
+
+  if ! git diff --quiet 2> /dev/null; then
+    FLAGS+=( "$MODIFIED" )
+  fi
+
+  if ! git diff --cached --quiet 2> /dev/null; then
+    FLAGS+=( "$STAGED" )
+  fi
+
+  local -a GIT_INFO
+  # GIT_INFO+=( "\033[38;5;15m±" )
+  GIT_INFO+=( "%F{#a6e3a1}($GIT_LOCATION)%{$reset_color%}" )
+  [[ ${#DIVERGENCES[@]} -ne 0 ]] && GIT_INFO+=( "${(j::)DIVERGENCES}" )
+  [[ ${#FLAGS[@]} -ne 0 ]] && GIT_INFO+=( "${(j::)FLAGS}" )
+  echo "${(j: :)GIT_INFO}"
+
+}
+# Prompt definition
+export PS1='
+%(!.%F{red}[ROOT.%F{blue}[)@%m]%f $( git_info )
+%F{#fab387}%(3~;../;)%2~ %F{#cdd6f4}%(!.#.>)%f '
+export PS2='%F{#cdd6f4}%_>%f '
 
 
 
