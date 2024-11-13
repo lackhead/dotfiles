@@ -1,0 +1,13 @@
+// Settings in here override those in "Default/Preferences.sublime-settings",
+// and are overridden in turn by syntax-specific settings.
+{
+	"show_full_path": true,
+	"ignored_packages":
+	[
+		"Vintage",
+	],
+	"index_files": true,
+	"font_face": "JetBrains Mono",
+	"font_size": 14,
+	"translate_tabs_to_spaces": true,
+}

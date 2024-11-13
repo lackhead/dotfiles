@@ -7,32 +7,21 @@
 #                                                  #
 ####################################################
 
-# Profiling (also see EOF) 
+# Profiling (also see EOF)
 # zmodload zsh/zprof
-
-
 
 ##############################################
 # Set up environment (variables and options) #
 ##############################################
-setopt nonomatch      			# hide error message if there is no match for the pattern
-setopt notify          			# report the status of background jobs immediately
-setopt numericglobsort 			# sort filenames numerically when it makes sense
-setopt magicequalsubst                  # enable filename expansion for arguments of the form 
-                                        # ‘anything=expression’
-bindkey -e                              # emacs keybindings
-bindkey '^p' history-search-backward    # Helpful when searching through history
+setopt nonomatch       # hide error message if there is no match for the pattern
+setopt notify          # report the status of background jobs immediately
+setopt numericglobsort # sort filenames numerically when it makes sense
+setopt magicequalsubst # enable filename expansion for arguments of the form
+# ‘anything=expression’
+bindkey -e                           # emacs keybindings
+bindkey '^p' history-search-backward # Helpful when searching through history
 bindkey '^n' history-search-forward
-export LESS="-qeRiFX"                   # Make less case-insensitive
-# integrate with fzf if it exists 
-if type fzf &> /dev/null; then
-   eval "$(fzf --zsh)"
-   if type rg &> /dev/null; then
-      # use ripgrep
-      export FZF_DEFAULT_COMMAND='rg --files --hidden'
-   fi
-fi
-
+export LESS="-qeRiFX" # Make less case-insensitive
 
 
 ################
@@ -41,14 +30,12 @@ fi
 # Enable substitution in the prompt.
 setopt prompt_subst
 # enable colors in the prompt
-autoload -U colors && colors 
+autoload -U colors && colors
 # Prompt definition
 export PS1='
 %(!.%F{red}[ROOT.%F{blue}[)@%m]%f $( git_info )
 %F{#fab387}%(3~;../;)%2~ %F{#cdd6f4}%(!.#.>)%f '
 export PS2='%F{#cdd6f4}%_>%f '
-
-
 
 ###########
 # Aliases #
@@ -59,15 +46,13 @@ alias pwds='gpg --decrypt ~clake/private/passes.gpg | less'
 alias rm='rm -i'
 alias dig='dig +search +noall +answer $*'
 alias ls='ls --color -Fh'
-if type bat &> /dev/null; then 
-   alias cat='bat'
-   BAT_THEME="Solarized (dark)"
+if type bat &>/dev/null; then
+    alias cat='bat'
+    BAT_THEME="Solarized (dark)"
 fi
-type thefuck &> /dev/null && eval $(thefuck --alias) 
-type fdfind &> /dev/null && alias find=fdfind
-type fd &> /dev/null && alias find=fd
-
-
+type thefuck &>/dev/null && eval $(thefuck --alias)
+type fdfind &>/dev/null && alias find=fdfind
+type fd &>/dev/null && alias find=fd
 
 ###########
 # HISTORY #
@@ -78,24 +63,21 @@ if [[ $UID == 0 || $EUID == 0 ]]; then
 else
     export HISTFILE=~/.zsh_history
 fi
-export HISTSIZE=100000			# number of commands to keep in memory (for use by zsh)
-export SAVEHIST=100000			# number of commands to keep in the HISTFILE
-setopt INC_APPEND_HISTORY		# Append history as commands are executed, not when shell exits
-setopt EXTENDED_HISTORY          	# Write the history file in the ':start:elapsed;command' format.
+export HISTSIZE=100000    # number of commands to keep in memory (for use by zsh)
+export SAVEHIST=100000    # number of commands to keep in the HISTFILE
+setopt INC_APPEND_HISTORY # Append history as commands are executed, not when shell exits
+setopt EXTENDED_HISTORY   # Write the history file in the ':start:elapsed;command' format.
 # setopt SHARE_HISTORY             	# Share history between all sessions.
-setopt HIST_IGNORE_DUPS                 # Don't enter into history if it duplicates the previous command
-setopt HIST_FIND_NO_DUPS         	# Do not display a previously found event.
-setopt HIST_VERIFY              	# Do not execute immediately upon history expansion.
-setopt APPEND_HISTORY            	# append to history file
-
-
+setopt HIST_IGNORE_DUPS  # Don't enter into history if it duplicates the previous command
+setopt HIST_FIND_NO_DUPS # Do not display a previously found event.
+setopt HIST_VERIFY       # Do not execute immediately upon history expansion.
+setopt APPEND_HISTORY    # append to history file
 
 ##################
 # Autocompletion #
 ##################
 autoload -U compinit
 compinit -i
-
 _comp_options+=(globdots)   # match against hidden files
 # use arrow keys to navigate the menu
 zstyle ':completion:*' menu select
@@ -112,76 +94,96 @@ zstyle ':completion:*' insert-tab pending
 zstyle ':completion:*' squeeze-slashes true
 # Colors
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# disable sort when completing `git checkout`
+zstyle ':completion:*:git-checkout:*' sort false
+
 
 # Turn off menu if we have fzf
 if type fzf &> /dev/null 2>&1; then
-   zstyle ':completion:*' menu no
-   zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color -F $realpath'
+    # preview directory's content with eza when completing cd
+    zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+    # NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
+    zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
+    # To make fzf-tab follow FZF_DEFAULT_OPTS.
+    # NOTE: This may lead to unexpected behavior since some flags break this plugin. See Aloxaf/fzf-tab#455.
+    zstyle ':fzf-tab:*' use-fzf-default-opts yes
+    # switch group using `<` and `>`
+    zstyle ':fzf-tab:*' switch-group '<' '>'
+    zstyle ':completion:*' menu no
+    zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color -F $realpath'
 fi
 
-
+###########
+# Plugins #
+###########
+if type fzf &> /dev/null 2>&1; then
+    zsh_add_plugin "Aloxaf/fzf-tab"
+fi
+zsh_add_plugin "zsh-users/zsh-autosuggestions"
+zsh_add_plugin "zsh-users/zsh-syntax-highlighting"
 
 ##########
 # zoxide #
 ##########
 # use Zoxide for cd if it exists
-# NOTE: this has to happen 
-if type zoxide &> /dev/null; then
-
-  # reset the db if root (particularly in NFS-mounted home dirs)
-  if [ "$EUID" = "0" ]; then
-     export _ZO_DATA_DIR="/root/.local/share/zoxide"
-  fi
-
-  eval "$(zoxide init --cmd cd zsh)"
-
+if type zoxide &>/dev/null; then
+    # reset the db if root (particularly in NFS-mounted home dirs)
+    if [ "$EUID" = "0" ]; then
+        export _ZO_DATA_DIR="/root/.local/share/zoxide"
+    fi
+    eval "$(zoxide init --cmd cd zsh)"
 fi
 
-
+#######
+# FZF #
+#######
+# integrate with fzf if it exists
+if type fzf &>/dev/null; then
+    eval "$(fzf --zsh)"
+    if type rg &>/dev/null; then
+        # use ripgrep
+        export FZF_DEFAULT_COMMAND='rg --files --hidden'
+    fi
+fi
 
 #######################
 # Pyenv Configuration #
 #######################
 if [[ -d "$HOME/.pyenv" && $EUID != 0 ]]; then
-   export PYENV_ROOT="$HOME/.pyenv"
-   [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-   eval "$(pyenv init -)"
-   # pyenv-virtualenv
-   # eval "$(pyenv virtualenv-init -)"
+    export PYENV_ROOT="$HOME/.pyenv"
+    [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init -)"
+    # pyenv-virtualenv
+    # eval "$(pyenv virtualenv-init -)"
 fi
-
-
 
 ######################
 # SCI Specific Stuff #
 ######################
-if [[ $( hostname -f ) == *".sci.utah.edu" ]]; then
+if [[ $(hostname -f) == *".sci.utah.edu" ]]; then
 
-  # root has some GPG keys that get used
-  if [[ $UID == 0 || $EUID == 0 ]]; then
-      export GNUPGHOME=/root/.gnupg
-  fi
+    # root has some GPG keys that get used
+    if [[ $UID == 0 || $EUID == 0 ]]; then
+        export GNUPGHOME=/root/.gnupg
+    fi
 
-  # babylon is my jump host (but only me)
-  if [[ "$HOST" == "babylon" && "$EUID" != "0" ]]; then
-     # load up ssh-agent
-     kch
-  fi
+    # babylon is my jump host (but only me)
+    if [[ "$HOST" == "babylon" && "$EUID" != "0" ]]; then
+        # load up ssh-agent
+        kch
+    fi
 
-  # Get SCI specific directories
-  for dir in /sci-it/{,s}bin /sci-it/ansible/bin; do
-     if [[ -d $dir ]]; then
-        pathmunge $dir before
-     fi
-  done
+    # Get SCI specific directories
+    for dir in /sci-it/{,s}bin /sci-it/ansible/bin; do
+        if [[ -d $dir ]]; then
+            pathmunge $dir before
+        fi
+    done
 
 fi
 
 # For accessing SCI from off campus
 alias sci-ssh='ssh -A -J ssh://shell.sci.utah.edu:5522 $*'
 
-
-
 # Profiling (see top of file)
 # zprof
-
