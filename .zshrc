@@ -22,7 +22,12 @@ bindkey -e                           # emacs keybindings
 bindkey '^p' history-search-backward # Helpful when searching through history
 bindkey '^n' history-search-forward
 export LESS="-qeRiFX" # Make less case-insensitive
-
+for ed in subl nvim vim vi; do
+    if type $ed &>/dev/null; then
+        export EDITOR=$(which $ed)
+        break
+    fi
+done
 
 ################
 # prompt stuff #
@@ -78,7 +83,7 @@ setopt APPEND_HISTORY    # append to history file
 ##################
 autoload -U compinit
 compinit -i
-_comp_options+=(globdots)   # match against hidden files
+_comp_options+=(globdots) # match against hidden files
 # use arrow keys to navigate the menu
 zstyle ':completion:*' menu select
 # Order of operations for matching (exact matches, globs, fuzzy)
@@ -93,13 +98,12 @@ zstyle ':completion:*' insert-tab pending
 # // gets expanded to /
 zstyle ':completion:*' squeeze-slashes true
 # Colors
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # disable sort when completing `git checkout`
 zstyle ':completion:*:git-checkout:*' sort false
 
-
 # Turn off menu if we have fzf
-if type fzf &> /dev/null 2>&1; then
+if type fzf &>/dev/null 2>&1; then
     # preview directory's content with eza when completing cd
     zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
     # NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
@@ -116,7 +120,7 @@ fi
 ###########
 # Plugins #
 ###########
-if type fzf &> /dev/null 2>&1; then
+if type fzf &>/dev/null 2>&1; then
     zsh_add_plugin "Aloxaf/fzf-tab"
 fi
 zsh_add_plugin "zsh-users/zsh-autosuggestions"
