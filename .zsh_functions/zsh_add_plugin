@@ -1,0 +1,26 @@
+#
+# zsh_add_plugin() - install a ZSH plugin, downloading git repo if necessary
+#
+# ARGUMENTS: name of plugin (in GitHub <user>/<repo> format)
+#
+
+
+function zsh_add_plugin() {
+
+	PLUGIN_DIR="${HOME}/.zsh_plugins"
+	PLUGIN_SRC=$1
+	PLUGIN_NAME=$( echo ${PLUGIN_SRC} | cut -d "/" -f 2 )
+
+	# clone, if not already there
+	if [ ! -d "${PLUGIN_DIR}/${PLUGIN_NAME}" ]; then
+	    echo "Cloning ZSH plugin ${PLUGIN_NAME}..."
+   		git clone "https://github.com/${PLUGIN_SRC}" "${PLUGIN_DIR}/${PLUGIN_NAME}" >/dev/null 2>&1
+    fi
+
+    # source plugin 
+	local -a initfiles=(
+        ${PLUGIN_DIR}/${PLUGIN_NAME}/${PLUGIN_NAME}.{,plugin.}{z,}sh{-theme,}(N)
+    )
+    (( $#initfiles )) && source $initfiles[1]
+
+}
