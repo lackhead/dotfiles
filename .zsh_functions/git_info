@@ -54,9 +54,9 @@ function git_info() {
 
     local -a GIT_INFO
     GIT_INFO="%F{#a6e3a1}( $GIT_LOCATION%{$reset_color%}"
-    [[ ${#DIVERGENCES[@]} -ne 0 ]] && GIT_INFO="$GIT_INFO ${(j::)DIVERGENCES}"
-    [[ ${#FLAGS[@]} -ne 0 ]] && GIT_INFO+="$GIT_INFO ${(j::)FLAGS}"
-    GIT_INFO="${GIT_INFO}%F{#a6e3a1})%{$reset_color%}"
+    [[ ${#DIVERGENCES[@]} -ne 0 ]] && GIT_INFO+=" ${(j::)DIVERGENCES}"
+    [[ ${#FLAGS[@]} -ne 0 ]] && GIT_INFO+=" ${(j::)FLAGS}"
+    GIT_INFO+="%F{#a6e3a1})%{$reset_color%}"
     echo "${GIT_INFO}"
 
 }
