@@ -6,7 +6,7 @@
 	defaultBranch = main
 
 [core]
-	editor = nvim	
+        editor = nvim
 	pager = delta
 
 [interactive]
@@ -26,3 +26,13 @@
 [diff]
 	colorMoved = default
 	
+[alias]
+	st = status -s
+        conf = config --global --edit
+        pr = pull --rebase --autostash
+        stsh = stash --keep-index
+        staash = stash --include-untracked
+        staaash = stash --all 
+        which = !git branch | grep -i 
+        amend = commit --amend --no-edit
+        edit = commit --amend --only
