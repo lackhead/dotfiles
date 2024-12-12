@@ -110,7 +110,7 @@ setopt APPEND_HISTORY    # append to history file
 # Autocompletion #
 ##################
 autoload -U compinit
-compinit -i
+compinit -C
 _comp_options+=(globdots) # match against hidden files
 # use arrow keys to navigate the menu
 zstyle ':completion:*' menu select
