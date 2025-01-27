@@ -1,6 +1,6 @@
 # Chad's Linux/Mac Config files
 
-This is my collection of dotfiles I use to configure my personal linux(-ish) environment. The general concept I follow is a pretty common one– using a bare git repo (stored in `~/.dotconf`) with the work tree pointed at my home directory. I find this pretty easy to use- no special tools/scripts (just an alias), no symlinks to manage, version control, and easy replication. You can also edit any dot file directly on whatever box you may be using and can easily merge it back into this repo using standard `git` commands (using the one alias), if desired. 
+This is my collection of dotfiles I use to configure my personal linux(-ish) environment, along with some generic scripts I've written to create my personal working environment. The general concept I follow is a pretty common one– using a bare git repo (stored in `~/.dotconf`) with the work tree pointed at my home directory. I find this pretty easy to use- no special tools/scripts (just an alias), no symlinks to manage, version control, and easy replication. You can also edit any dot file directly on whatever box you may be using and can easily merge it back into this repo using standard `git` commands (using the one alias), if desired. 
 
 ## The Initial Repo Build
 Here are the commands I used to create this repo: 
