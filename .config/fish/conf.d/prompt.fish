@@ -16,9 +16,14 @@ if status is-interactive
         # create space between commands
         echo
 
-        # hostname
+        # hostname and possibly git info
         set_color $fish_color_host
-        printf "(fish) [@%s]\n" (prompt_hostname)
+        printf "(fish) [@%s] " (prompt_hostname)
+        set_color normal
+        # git info
+        set -g __fish_git_prompt_show_informative_status 1
+        set -g __fish_git_prompt_color $fish_color_host_remote
+        echo (fish_git_prompt)
   
         # actual prompt depends on whether we're root or not
         if fish_is_root_user
