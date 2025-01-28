@@ -14,15 +14,17 @@ function kch
     end
 
     # Start agent if necessary 
-    set HOST (hostname -s)
-    command keychain --host $HOST
-
-    # Source the file
-    test -f ~/.keychain/$HOST-fish && source ~/.keychain/$HOST-fish
+    #  - keychain will find existing agent
+    #  - no need for agent management on Mac
+    if not test (command uname) = "Darwin" 
+        set HOST (hostname -s)
+        command keychain --host $HOST
+        test -f ~/.keychain/$HOST-fish && source ~/.keychain/$HOST-fish
+    end
 
     # Add any missing identity files
     set idlist (ssh-add -l) 
-    for id in (grep IdentityFile ~/.ssh/config | string trim | string split ' ' -f2)
+    for id in (sed 's/#.*//' $HOME/.ssh/config | grep IdentityFile | string trim | string split ' ' -f2)
         # get filename expansion
         set id (eval echo $id) 
         set -l fp (ssh-keygen -l -f $id)
