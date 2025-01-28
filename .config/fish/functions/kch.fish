@@ -4,6 +4,9 @@
 
 function kch 
 
+    # Only run this if we aren't root
+    fish_is_root_user && return 
+
     # make sure we have keychain
     if not type -q keychain
         echo "ERROR: keychain executable not found" >&2
