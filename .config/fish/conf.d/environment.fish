@@ -30,3 +30,8 @@ end
 if not command -q bat && command -q batcat
     abbr --position command bat batcat
 end
+
+# set up pyenv
+if type -q pyenv
+   pyenv init - fish | source
+end
