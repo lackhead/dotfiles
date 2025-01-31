@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+# wutb() - who uses this box? 
+#
+# ARGUMENTS: <none>  
+#
+# All this does is look who is in the lastlog and gives the total count over time
+#
+
+# associative array to hold counts
+declare -A usercounts
+
+# read over the last output 
+last | while IFS= read -r line; do
+
+   if [[ $line == "wtmp begins"* ]]; then
+
+      # last line, print out the start time
+      echo "$line:" | sed 's/wtmp begins/Since/'
+      # and the counts in sorted order
+      for user in ${!usercounts[@]}; do 
+          printf '%s\t%s\n' ${usercounts["$user"]} $user; 
+      done | sort -nr
+
+   else
+
+      # skip root, reboots, shutdowns, and blank lines
+      [[ $line == "reboot"* ]] && continue;
+      [[ $line == "root"* ]] && continue;
+      [[ $line == "shutdown"* ]] && continue;
+      [[ $line == "" ]] && continue;
+      
+      # keep a count
+      user=$( echo $line | awk '{ print $1 }' )
+      ((usercounts[${user}]++))
+   fi
+
+done
