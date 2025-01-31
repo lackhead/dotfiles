@@ -34,6 +34,7 @@ dotconf config status.showUntrackedFiles no
 dotconf update-index --assume-unchanged README.md
 dotconf update-index --assume-unchanged LICENSE
 ```
+Additionally, to avoid pulling down README/LICENSE files, run `dotconf config core.sparsecheckout true` and then add `README.md` and `LICENSE` to the file `.dotconf/info/sparse-checkout`.
 
 ## General Usage
 Go ahead and update dotfiles as you see fit on whatever box you happen to be working on and use standard `git` techniques to manage the canonical copies in the repo. If you want to add more files, just do the same `dotconf add <filename>` and commit/push as above. 
