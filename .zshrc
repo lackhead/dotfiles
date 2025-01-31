@@ -11,7 +11,7 @@
 # zmodload zsh/zprof
 
 # Bias towards fish
-# [[ type fish &>/dev/null ]] && exec fish
+[[ type fish &>/dev/null ]] && exec fish
 
 ##############################################
 # Set up environment (variables and options) #
