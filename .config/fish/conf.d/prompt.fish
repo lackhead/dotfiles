@@ -5,6 +5,12 @@ if status is-interactive
 
     function fish_prompt
 
+        # configuration options
+        set -gx fish_prompt_pwd_dir_length 2
+        set -gx fish_prompt_pwd_full_dirs 2
+        set -gx __fish_git_prompt_show_informative_status 1
+        set -gx __fish_git_prompt_color $fish_color_host_remote
+
         # show any error code from previous command
         set -l last_status $status
         # Prompt status only if it's not 0
@@ -21,8 +27,6 @@ if status is-interactive
         printf "(fish) [@%s] " (prompt_hostname)
         set_color normal
         # git info
-        set -g __fish_git_prompt_show_informative_status 1
-        set -g __fish_git_prompt_color $fish_color_host_remote
         echo (fish_git_prompt)
   
         # actual prompt depends on whether we're root or not
