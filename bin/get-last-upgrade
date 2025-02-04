@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# get-last-upgrade - find the last time this box had a package installed (last upgraded)  
+#
+
+for logfile in $( ls -t /var/log/dpkg.log* ); do
+    if [[ "$logfile" == *"gz" ]]; then
+        CATPROG=zcat
+    else
+        CATPROG=cat
+    fi
+    upgrade_time=$( $CATPROG $logfile | grep upgrade | awk '{ print $1, $2 }' | sort -r | head -1 2>/dev/null )
+    if [[ ! -z "$upgrade_time" ]]; then
+        echo "Last upgrade: $upgrade_time"
+        echo "From log file: $logfile"
+        exit
+    fi
+done
+echo "No upgrade time found." && exit 1
+
