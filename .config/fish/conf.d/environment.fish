@@ -19,9 +19,10 @@ if type -q rg
 end
 
 # What is the default pager
-for pager in bat batcat less
+set -gx PAGER less
+for pager in bat batcat
     if type -q $pager
-        set -gx PAGER (command -v $pager) 
+        set -gx PAGER (command -v $pager) -p
         break
     end
 end
