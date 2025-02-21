@@ -4,8 +4,6 @@
 #
 function ci --wraps ci 
 
-    set fish_trace on
-
     # make sure ci exists
     if not type -q -f ci
         echo "ERROR: ci executable not found" >&2 && return 1
