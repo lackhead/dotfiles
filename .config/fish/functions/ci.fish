@@ -12,14 +12,14 @@ function ci --wraps ci
     end 
 
     # just use the normal ci if we're not root
-    if not fish_is_root_user && set -q $SUDO_USER
+    if not fish_is_root_user 
          command ci $argv && return $status
     end
 
     # If a -w<username> arg is already given, don't do anything. Otherwise
     # add in a flag to make sure the right username is included in the logs
     for arg in $argv
-        if string match -r "^-w"
+        if string match -r -- '^-w' "$arg"
             # nothing to do 
             command ci $argv && return $status
         end

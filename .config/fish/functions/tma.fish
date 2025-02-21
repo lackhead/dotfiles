@@ -1,11 +1,12 @@
 function tma --wraps 'tmux' --description "envoke tmux and attach/create a session and jive with iTerm2"
 
+   set sessionname "Main"
+
    # if an arg is given, that's the session to join
    if set -q argv[1] 
-      command tmux -CC attach -t $argv[1]
-   else
-      # By default, use a session named "Main" and attach/create as appropriate
-      command tmux -CC new-session -A -s Main
+      set sessionname $argv[1]
    end
+
+   command tmux -CC new-session -A -s $sessionname
 
 end
