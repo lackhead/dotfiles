@@ -3,7 +3,8 @@
 #
 function tma --wraps 'tmux' --description "envoke tmux and attach/create a session and jive with iTerm2"
 
-   set sessionname "Main"
+    # default session name
+    set sessionname "Main"
 
     function __help -d "show help for tma()"
 
@@ -28,7 +29,8 @@ function tma --wraps 'tmux' --description "envoke tmux and attach/create a sessi
 
     if set -q argv[1] 
        if [ "$argv[1]" = "ls" ]
-           command tmux list-sessions && return 0
+           command tmux list-sessions
+           return 0
        end   
        set sessionname $argv[1]
     end
