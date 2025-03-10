@@ -15,9 +15,9 @@ if string match -q "*sci.utah.edu" (hostname -f)
     end
     
     # SCI specific paths
-    for dir in /sci-it/{s,bin} /sci-it/ansible/bin
+    for dir in /sci-it/{s,}bin /sci-it/ansible/{s,}bin
         if test -d $dir
-            fish_add_path --path --prepend $dir
+            fish_add_path --path $dir
         end
     end
 
