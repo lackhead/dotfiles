@@ -4,3 +4,4 @@ LICENSE
 *.swo
 *~
 .dotconf
+.DS_Store
