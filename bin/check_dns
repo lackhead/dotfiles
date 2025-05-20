@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+#
+# check-dns: takes in a hostname or IP, resolves it to the other, then back again to 
+#            verify that forward<->resolution looks right. 
+#
+
+###
+### Variables
+###
+orig=
+IFS='' read -r -d '' usage <<"EOF"
+
+check-dns: forward<->reverse resolve a host or IP address
+
+Usage:
+  check-dns [ -h|--help ] 
+  check-dns <host|ip>
+
+Arguments:
+  -h|--help        Show what you are seeing right now
+
+EOF
+
+
+###
+### Functions
+###
+_host2ip () {
+
+    digresult=$( dig +search +noall +answer $1 ) 
+    if [ ! $? -eq 0 ]; then 
+        echo "ERROR: cannot resolve $1" >&2 && exit 1
+    fi
+    return $( echo $ip | awk '{ print $5 }' )
+   
+}
+
+_ip2host () {
+
+    host=$( dig -x +search +noall +answer $1 ) 
+    if $? ; then 
+        echo "ERROR: cannot resolve $1" >&2 && exit 1
+    fi
+    return $host
+   
+}
+
+
+###
+### Process Args
+###
+while [[ $# -gt 0 ]]; do
+   case $1 in
+       -h|--help)
+           echo "$usage" && exit 0
+           ;;
+      *)
+           if [[ -z "$orig" ]]; then
+               orig=$1
+           else 
+              echo "ERROR: superfluous option $1" >&2 
+              echo "$usage" && exit 1
+           fi
+           ;;
+   esac
+   shift
+done
+
+host=$orig
+ip=$( _host2ip $host)
+echo "Host $host"
+echo "$ip"
+
