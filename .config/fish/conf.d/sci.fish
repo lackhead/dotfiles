@@ -11,7 +11,7 @@ if string match -q "*sci.utah.edu" (hostname -f)
     # babylon host specific
     if test (hostname) = "babylon" 
        and not fish_is_root_user
-       and not status is-interactive
+       and status is-interactive
         # Assuming kch is a custom function for ssh-agent
         kch
     end
