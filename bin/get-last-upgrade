@@ -1,20 +1,98 @@
 #!/bin/bash
+# vim: filetype=sh
 #
-# get-last-upgrade - find the last time this box had a package installed (last upgraded)  
+# get-last-upgrade
+#
+# This script will find all the times that a dist-upgrade has been called on 
+# an Ubuntu box. 
 #
 
-for logfile in $( ls -t /var/log/dpkg.log* ); do
+###
+### Variables
+###
+show_all=false
+IFS='' read -r -d '' usage <<"EOF"
+
+get-last-upgrade: Find the last time a dist-upgrade was done
+
+Usage:
+  get-last-upgrade [ -h|--help ]
+  get-last-upgrade [ -l|--last ]
+              
+Arguments:
+  -a|--all      Show all dist-upgrades 
+  -h|--help     Show what you are seeing right now
+
+EOF
+
+
+
+###
+### Functions
+###
+
+function get-upgrade-times () 
+{
+    #
+    # This function parses a history.log file (zipped or not) and returns 
+    # all of times a dist-upgrade was called
+    #
+    local histfile=$1
     if [[ "$logfile" == *"gz" ]]; then
         CATPROG=zcat
     else
         CATPROG=cat
     fi
-    upgrade_time=$( $CATPROG $logfile | grep upgrade | awk '{ print $1, $2 }' | sort -r | head -1 2>/dev/null )
-    if [[ ! -z "$upgrade_time" ]]; then
-        echo "Last upgrade: $upgrade_time"
-        echo "From log file: $logfile"
-        exit
-    fi
-done
-echo "No upgrade time found." && exit 1
+    $CATPROG $histfile | while read line; do
+        if [[ $line == "Start-Date:"* ]]; then
+            LASTTIME=$( echo $line | awk '{ print $2, $3 }' ) 
+            LASTTIME=$( date -d "$LASTTIME" +"%s" )
+        elif [[ $line == "Commandline:"* && $line == *"dist-upgrade"* ]]; then
+            echo "$LASTTIME" 
+        fi
+    done
 
+}
+
+
+
+###
+### Process Args
+###
+while [[ $# -gt 0 ]]; do
+    case $1 in
+    -a | --all)
+        show_all=true
+        ;;
+    -h | --help)
+        echo "$usage" && exit 0
+        ;;
+    -*)
+        echo "ERROR: unknown option $1" && exit 1
+        ;;
+    *)
+        echo "ERROR: superfluous option $1" && exit 1
+        ;;
+    esac
+    shift
+done
+
+
+
+###
+### Sort and display upgrades
+###
+upgrade_times=()
+for logfile in $( ls -t /var/log/apt/history.log* ); do
+    upgrade_times+=( $( get-upgrade-times $logfile ) )  
+done
+# sort the list
+IFS=$'\n' sorted_times=($(sort <<<"${upgrade_times[*]}")); unset IFS
+# output in ISO 8601 format
+if [[ "$show_all" == true ]]; then
+    for upgrade_time in "${sorted_times[@]}"; do 
+        echo $( date --date "@$upgrade_time" "+%Y-%m-%dT%H:%M:%S" )
+    done
+else 
+    echo $( date --date "@${sorted_times[-1]}" "+%Y-%m-%dT%H:%M:%S" )
+fi
