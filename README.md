@@ -26,7 +26,7 @@ Note that I do have the `dotconf` alias in my `.zshrc` file- this is just to mak
 ## To Get Dotfiles on a New Machine
 If you want to get started using this on a new machine somewhere, the general ideas is to clone the repo, copy the files into place, then remove the working directory (the `~/.dotconf` directory, which git uses, remains): 
 ```
-git clone --separate-git-dir=${HOME}/.dotconf [git@github.com:lackhead/dotfiles](https://github.com/lackhead/dotfiles) ${HOME}/dotfiles_temp
+git clone --separate-git-dir=${HOME}/.dotconf https://github.com/lackhead/dotfiles ${HOME}/dotfiles_temp
 rsync --recursive --verbose --exclude '.git' --exclude README.md --exclude LICENSE dotfiles_temp/ ${HOME}/
 rm -rf ${HOME}/dotfiles_temp
 alias dotconf='/usr/bin/git --git-dir=${HOME}/.dotconf/ --work-tree=${HOME}'
