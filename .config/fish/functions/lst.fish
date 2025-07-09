@@ -12,7 +12,7 @@ function lst --description "List most recently modified things in a given direct
         echo
         echo "Arguments:"
         echo "    -h/--help    What you see here"
-        echo "    -n/--num     How many items to showi (defult: $NUMSHOW)"
+        echo "    -n/--num     How many items to show (defult: $NUMSHOW)"
         echo "    -r/--reverse Show in oldest->newest order"
         return 0
     end
