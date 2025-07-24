@@ -8,7 +8,7 @@ set -x LESS "-qeRiFX"
 # default editor
 for ed in subl nvim vim vi
     if type -q $ed
-        set -gx EDITOR (command -v $ed)
+        set -x EDITOR (command -v $ed)
         break
     end
 end
@@ -22,7 +22,7 @@ end
 set -gx PAGER less
 for pager in bat batcat
     if type -q $pager
-        set -gx PAGER (command -v $pager) -p
+        set -x PAGER (command -v $pager) -p
         break
     end
 end
