@@ -7,41 +7,47 @@ if not status is-interactive
     return
 end
 
-function fish_prompt
+function fish_prompt --description 'Write out the prompt'
 
     # configuration options
     set -gx fish_prompt_pwd_dir_length 2
     set -gx fish_prompt_pwd_full_dirs 2
-    set -gx __fish_git_prompt_show_informative_status 1
-    set -gx __fish_git_prompt_color $fish_color_host_remote
 
     # show any error code from previous command
-    set -l last_status $status
-    # Prompt status only if it's not 0
-    set -l stat
-    if test $last_status -ne 0
-        echo (set_color $fish_color_error)"ERROR code: $last_status"(set_color normal)
+    set -l last_pipestatus $pipestatus
+    set -lx __fish_last_status $status # Export for __fish_print_pipestatus.
+    set -l status_color (set_color $fish_color_status)
+    set -l statusb_color (set_color --bold $fish_color_status)
+    set -l status_prompt (__fish_print_pipestatus "[" "]" "|" "$status_color" "$statusb_color" $last_pipestatus)
+    # print out the prompt ensuring 1 blank line before the next prompt
+    echo $status_prompt
+    [ -n "$status_prompt" ] && echo 
+
+    # define how things should look
+    set -l prompt_suffix '>'
+    set -l prompt_hostline_color $fish_color_host
+    set -l prompt_hostline_user ""
+    set -l prompt_pathline_color $fish_color_end
+    # root gets things a bit differently
+    if functions -q fish_is_root_user; and fish_is_root_user
+        set prompt_suffix '#'
+        set prompt_hostline_color (set_color --bold $fish_color_status)
+        set prompt_hostline_user "ROOT"
+        set prompt_pathline_color $fish_color_error
     end
 
-    # create space between commands
-    echo
-
-    # hostname and possibly git info
-    set_color $fish_color_host
-    printf "[@%s] " (prompt_hostname)
+    ## DO IT
+    # hostname
+    set_color $prompt_hostline_color
+    printf "[%s@%s] " $prompt_hostline_user (prompt_hostname)
     set_color normal
-    # git info
+    # possibly git info
+    set -gx __fish_git_prompt_show_informative_status 1
+    set -gx __fish_git_prompt_color $fish_color_host_remote
     echo (fish_git_prompt)
-  
-    # actual prompt depends on whether we're root or not
-    if fish_is_root_user
-        set_color $fish_color_error
-        set prompt_char "#"
-    else
-        set_color $fish_color_end
-        set prompt_char ">"
-    end
-    printf "%s %s " (prompt_pwd) $prompt_char
+    # path and suffix 
+    set_color $prompt_pathline_color
+    printf "%s %s " (prompt_pwd) $prompt_suffix
     set_color normal
 
 end
