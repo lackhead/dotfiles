@@ -26,8 +26,10 @@ function fish_prompt --description 'Write out the prompt'
 
     # define how things should look in the main prompt
     set -l prompt_suffix '>'
-    set -l prompt_hostline_user ""
+    set -l prompt_hostline_user "$USER"
+    test "$USER" = "clake" && set -l prompt_hostline_user ""
     set -l prompt_hostline_color $fish_color_host
+    set -l prompt_username_color $fish_color_host_remote
     set -l prompt_pathline_color $fish_color_cwd
     set -q fish_color_status
        or set -g fish_color_status red
@@ -35,12 +37,16 @@ function fish_prompt --description 'Write out the prompt'
     if fish_is_root_user
         set prompt_suffix '#'
         set prompt_hostline_user "ROOT"
-        set prompt_hostline_color $fish_color_error
+        set prompt_username_color $fish_color_error
     end
 
     # show hostname
     set_color $prompt_hostline_color
-    printf "[%s@%s] " $prompt_hostline_user (prompt_hostname)
+    printf "["
+    set_color $prompt_username_color
+    printf $prompt_hostline_user 
+    set_color $prompt_hostline_color
+    printf "@%s]" (prompt_hostname)
     set_color normal
 
     # show possibly git info
