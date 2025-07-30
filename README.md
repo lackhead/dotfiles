@@ -5,8 +5,8 @@ This is my collection of dotfiles I use to configure my personal linux(-ish) env
 ## The Initial Repo Build
 Here are the commands I used to create this repo: 
 ```
-git init --bare ${HOME}/.dotconf
-alias dotconf='/usr/bin/git --git-dir=${HOME}/.dotconf/ --work-tree=${HOME}'
+git init --bare $HOME/.dotconf
+alias dotconf='/usr/bin/git --git-dir=$HOME/.dotconf/ --work-tree=$HOME'
 dotconf config status.showUntrackedFiles no
 echo ".dotconf" >> .gitignore
 ```
@@ -26,10 +26,10 @@ Note that I do have the `dotconf` alias in my `.zshrc` file- this is just to mak
 ## To Get Dotfiles on a New Machine
 If you want to get started using this on a new machine somewhere, the general ideas is to clone the repo, copy the files into place, then remove the working directory (the `~/.dotconf` directory, which git uses, remains): 
 ```
-git clone --separate-git-dir=${HOME}/.dotconf https://github.com/lackhead/dotfiles ${HOME}/dotfiles_temp
-rsync --recursive --verbose --exclude '.git' --exclude README.md --exclude LICENSE dotfiles_temp/ ${HOME}/
+git clone --separate-git-dir=$HOME/.dotconf https://github.com/lackhead/dotfiles $HOME/dotfiles_temp
+rsync --recursive --verbose --exclude '.git' --exclude README.md --exclude LICENSE dotfiles_temp/ $HOME/
 rm -rf ${HOME}/dotfiles_temp
-alias dotconf='/usr/bin/git --git-dir=${HOME}/.dotconf/ --work-tree=${HOME}'
+alias dotconf='/usr/bin/git --git-dir=$HOME/.dotconf/ --work-tree=$HOME'
 dotconf config status.showUntrackedFiles no
 dotconf update-index --assume-unchanged README.md
 dotconf update-index --assume-unchanged LICENSE
