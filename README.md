@@ -28,7 +28,7 @@ If you want to get started using this on a new machine somewhere, the general id
 ```
 git clone --separate-git-dir=$HOME/.dotconf https://github.com/lackhead/dotfiles $HOME/dotfiles_temp
 rsync --recursive --verbose --exclude '.git' --exclude README.md --exclude LICENSE dotfiles_temp/ $HOME/
-rm -rf ${HOME}/dotfiles_temp
+rm -rf $HOME/dotfiles_temp
 alias dotconf='/usr/bin/git --git-dir=$HOME/.dotconf/ --work-tree=$HOME'
 dotconf config status.showUntrackedFiles no
 dotconf update-index --assume-unchanged README.md
