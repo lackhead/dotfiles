@@ -35,7 +35,7 @@ EOF
 ###
 print_status() {
     if [[ "$verbose" = true ]]; then
-        echo -e "${GREEN}[WARNING]${NORMAL} $1" >&2
+        echo -e "${GREEN}[STATUS]${NORMAL} $1" >&2
     fi
 }
 
