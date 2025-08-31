@@ -3,12 +3,15 @@
 #
 if string match -q "*sci.utah.edu" (hostname -f)
 
-    # use root's GPG config
+    # A couple of rootly things
     if fish_is_root_user
         set -gx GNUPGHOME /root/.gnupg
+        if test (hostname) = "babylon"
+           eval ( /local/ansible/bin/ansible-agent -i )
+        end 
     end
     
-    # babylon host specific
+    # load my agent on babylon if appropriate
     if test (hostname) = "babylon" 
        and not fish_is_root_user
        and status is-interactive
@@ -23,4 +26,9 @@ if string match -q "*sci.utah.edu" (hostname -f)
         end
     end
 
+    # Ansible
+    set ANSIBLE_KEEP_REMOTE_FILES 0
+    set ANSIBLE_REMOTE_TMP_CLEANUP yes
+    set ANSIBLE_LOCAL_TMP /tmp/ansible-local
+   
 end
