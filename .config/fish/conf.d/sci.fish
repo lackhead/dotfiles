@@ -7,7 +7,17 @@ if string match -q "*sci.utah.edu" (hostname -f)
     if fish_is_root_user
         set -gx GNUPGHOME /root/.gnupg
         if test (hostname) = "babylon"
-           eval ( /local/ansible/bin/ansible-agent -i )
+            eval ( /local/ansible/bin/ansible-agent -i )
+            if test $status -eq 0
+                set_color $fish_color_error 2>/dev/null; or set_color red
+                echo -n "[ROOT ANSIBLE AGENT] "
+                set_color $fish_color_comment 2>/dev/null; or set_color green
+                echo "loaded and ready for use"
+                set_color normal
+            else
+                set_color $fish_color_error 2>/dev/null; or set_color red
+                echo "[SUDO USER CONFIG] FAILED!"
+            end
         end 
     end
     
