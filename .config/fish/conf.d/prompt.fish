@@ -12,6 +12,8 @@ function fish_prompt --description 'Write out the prompt'
     # generic options
     set -gx fish_prompt_pwd_dir_length 2
     set -gx fish_prompt_pwd_full_dirs 2
+    # Disable default venv prompt prefix since we're handling it ourselves
+    set -gx VIRTUAL_ENV_DISABLE_PROMPT 1
 
     # show any error code from previous command to wrap up the previous
     # command 
@@ -47,6 +49,13 @@ function fish_prompt --description 'Write out the prompt'
     printf $prompt_hostline_user 
     set_color $prompt_hostline_color
     printf "@%s]" (prompt_hostname)
+    set_color normal
+
+    # show venv indicator if active
+    if set -q VIRTUAL_ENV
+       set_color $fish_color_comment
+       printf " (venv)"
+    end
     set_color normal
 
     # show possibly git info
