@@ -3,10 +3,13 @@
 #
 if string match -q "*sci.utah.edu" (hostname -f)
 
+    # Some hosts get special treatment
+    set admin_hosts babylon babs
+
     # A couple of rootly things
     if fish_is_root_user
         set -gx GNUPGHOME /root/.gnupg
-        if test (hostname) = "babylon"
+        if contains (hostname) $admin_hosts 
             eval ( /local/ansible/bin/ansible-agent -i )
             if test $status -eq 0
                 set_color $fish_color_error 2>/dev/null; or set_color red
@@ -22,7 +25,7 @@ if string match -q "*sci.utah.edu" (hostname -f)
     end
     
     # load my agent on babylon if appropriate
-    if test (hostname) = "babylon" 
+    if contains (hostname) $admin_hosts
        and not fish_is_root_user
        and status is-interactive
         # Assuming kch is a custom function for ssh-agent
@@ -37,8 +40,11 @@ if string match -q "*sci.utah.edu" (hostname -f)
     end
 
     # Ansible
-    set ANSIBLE_KEEP_REMOTE_FILES 0
-    set ANSIBLE_REMOTE_TMP_CLEANUP yes
-    set ANSIBLE_LOCAL_TMP /tmp/ansible-local
+    if contains (hostname) $admin_hosts
+        # these are only needed on hosts Ansible is run from 
+        set -x ANSIBLE_KEEP_REMOTE_FILES 0
+        set -x ANSIBLE_REMOTE_TMP_CLEANUP yes
+        set -x ANSIBLE_LOCAL_TMP /tmp/ansible-local
+    end
    
 end

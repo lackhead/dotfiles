@@ -13,13 +13,25 @@ function kch
         return -1
     end
 
-    # Start agent if necessary 
+    # Start agent if necessary
     #  - keychain will find existing agent
     #  - no need for agent management on Mac
-    if not test (command uname) = "Darwin" 
+    if not test (command uname) = "Darwin"
         set HOST (hostname -s)
         command keychain --host $HOST
-        test -f ~/.keychain/$HOST-fish && source ~/.keychain/$HOST-fish
+        if test -f ~/.keychain/$HOST-fish
+            # Source the file but convert -x to -gx for SSH agent variables
+            # to prevent an agent running on one host from interfering with 
+            # another host
+            for line in (cat ~/.keychain/$HOST-fish)
+                # Replace 'set -x' with 'set -gx' for SSH_* variables
+                if string match -qr '^set -x (SSH_[A-Z_]+)' -- $line
+                    eval (string replace 'set -x' 'set -gx' -- $line)
+                else
+                    eval $line
+                end
+            end
+        end
     end
 
     # Add any missing identity files
