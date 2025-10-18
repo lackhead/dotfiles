@@ -24,12 +24,9 @@ function kch
             # to prevent an agent running on one host from interfering with 
             # another host
             for line in (cat ~/.keychain/$HOST-fish)
-                # Replace 'set -x' with 'set -gx' for SSH_* variables
-                if string match -qr '^set -x (SSH_[A-Z_]+)' -- $line
-                    eval (string replace 'set -x' 'set -gx' -- $line)
-                else
-                    eval $line
-                end
+                # change universal to global variable, so things don't conflict
+                # in a multi-machine environment
+                eval (string replace ' -U ' ' -g ' -- $line)
             end
         end
     end
