@@ -1,0 +1,5 @@
+shell-integration = fish
+command = /opt/homebrew/bin/fish --interactive --login 
+copy-on-select = clipboard
+macos-option-as-alt = true
+clipboard-paste-protection = false
