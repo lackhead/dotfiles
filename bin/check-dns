@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# check-dns: takes in a hostname or IP, resolves it to the other, then back again to 
-#            verify that forward<->resolution looks right. 
+# check-dns: takes in a hostname or IP, resolves it to the other, then back again to
+#            verify that forward<->resolution looks right.
 #
 
 ###
@@ -20,7 +20,7 @@ IFS='' read -r -d '' usage <<"EOF"
 check-dns: forward<->reverse resolve a host or IP address
 
 Usage:
-  check-dns [ -h|--help ] 
+  check-dns [ -h|--help ]
   check-dns [ -v|--verbose ] <host|ip>
 
 Arguments:
@@ -51,25 +51,37 @@ print_error() {
 _host2ip () {
 
     print_status "looking up IP address with 'dig +search +noall +answer $1'"
-    digresult=$( command dig +search +noall +answer $1 ) 
-    if [ ! $? -eq 0 ]; then 
-        print_error "cannot resolve $1" 
+    digresult=$( command dig +search +noall +answer $1 )
+    if [ ! $? -eq 0 ]; then
+        print_error "cannot resolve $1"
         exit 1
     fi
-    echo $digresult | awk '{ print $5 }' 
-   
+
+    # Check if result contains a CNAME record
+    if echo "$digresult" | grep -q "CNAME"; then
+        # Extract CNAME target (field 5 of the CNAME line)
+        cname=$(echo "$digresult" | awk '/CNAME/ { print $5 }')
+        # Extract IP address (field 5 of the A record line - look for " A " in field 4)
+        ipaddr=$(echo "$digresult" | awk '$4 == "A" { print $5 }')
+        # Return both in format "CNAME:ipaddr"
+        echo "${cname}:${ipaddr}"
+    else
+        # No CNAME, just return the IP address
+        echo "$digresult" | awk '{ print $5 }'
+    fi
+
 }
 
 _ip2host () {
 
     print_status "looking up hostname with 'dig +short -x $1'"
-    digresult=$( command dig +short -x $1 ) 
-    if [ ! $? -eq 0 ]; then 
-        print_error "cannot resolve $1" 
+    digresult=$( command dig +short -x $1 )
+    if [ ! $? -eq 0 ]; then
+        print_error "cannot resolve $1"
         exit 1
     fi
     echo $digresult
-   
+
 }
 
 
@@ -87,7 +99,7 @@ while [[ $# -gt 0 ]]; do
       *)
            if [[ -z "$orig" ]]; then
                orig=$1
-           else 
+           else
               print_error "superfluous option $1"
               echo "$usage" && exit 1
            fi
@@ -111,26 +123,49 @@ if [[ $orig =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
         exit 1
     fi
     print_status "dig returned $dnshost from $ipaddr"
-    final=$( _host2ip $dnshost ) 
-    if [ -z "$final" ]; then
+    result=$( _host2ip $dnshost )
+    if [ -z "$result" ]; then
         print_error "failure converting $dnshost to a IP address"
         exit 1
     fi
-    echo "$ipaddr -> $dnshost -> $final" 
+
+    # Check if result contains CNAME (format: "cname:ipaddr")
+    if [[ "$result" == *":"* ]]; then
+        cname="${result%%:*}"
+        final="${result##*:}"
+        echo "$ipaddr -> $dnshost -> $cname -> $final"
+    else
+        final="$result"
+        echo "$ipaddr -> $dnshost -> $final"
+    fi
 else
     dnshost=$orig
     print_status "starting from hostname: $dnshost"
-    ipaddr=$( _host2ip $dnshost )
-    if [ -z "$ipaddr" ]; then
+    result=$( _host2ip $dnshost )
+    if [ -z "$result" ]; then
         print_error "failure converting $dnshost to a IP address"
         exit 1
     fi
-    print_status "dig returned $ipaddr from $dnshost"
-    final=$( _ip2host $ipaddr ) 
-    if [ -z "$final" ]; then
-        print_error "failure converting $ipaddr to a hostname"
-        exit 1
-    fi
-    echo "$dnshost -> $ipaddr -> $final" 
-fi
 
+    # Check if result contains CNAME (format: "cname:ipaddr")
+    if [[ "$result" == *":"* ]]; then
+        cname="${result%%:*}"
+        ipaddr="${result##*:}"
+        print_status "dig returned CNAME $cname -> $ipaddr from $dnshost"
+        final=$( _ip2host $ipaddr )
+        if [ -z "$final" ]; then
+            print_error "failure converting $ipaddr to a hostname"
+            exit 1
+        fi
+        echo "$dnshost -> $cname -> $ipaddr -> $final"
+    else
+        ipaddr="$result"
+        print_status "dig returned $ipaddr from $dnshost"
+        final=$( _ip2host $ipaddr )
+        if [ -z "$final" ]; then
+            print_error "failure converting $ipaddr to a hostname"
+            exit 1
+        fi
+        echo "$dnshost -> $ipaddr -> $final"
+    fi
+fi
