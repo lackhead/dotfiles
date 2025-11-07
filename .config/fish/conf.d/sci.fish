@@ -10,16 +10,20 @@ if string match -q "*sci.utah.edu" (hostname -f)
     if fish_is_root_user
         set -gx GNUPGHOME /root/.gnupg
         if contains (hostname) $admin_hosts 
-            eval ( /local/ansible/bin/ansible-agent -i )
-            if test $status -eq 0
-                set_color $fish_color_error 2>/dev/null; or set_color red
-                echo -n "[ROOT ANSIBLE AGENT] "
-                set_color $fish_color_comment 2>/dev/null; or set_color green
-                echo "loaded and ready for use"
-                set_color normal
-            else
-                set_color $fish_color_error 2>/dev/null; or set_color red
-                echo "[SUDO USER CONFIG] FAILED!"
+
+            # Connect to the agent if it exists
+            if command -q /local/sbin/ansible-agent 
+                eval ( /local/sbin/ansible-agent -i )
+                if test $status -eq 0
+                    set_color $fish_color_error 2>/dev/null; or set_color red
+                    echo -n "[ROOT ANSIBLE AGENT] "
+                    set_color $fish_color_comment 2>/dev/null; or set_color green
+                    echo "loaded and ready for use"
+                    set_color normal
+                else
+                    set_color $fish_color_error 2>/dev/null; or set_color red
+                    echo "[SUDO USER CONFIG] FAILED!"
+                end
             end
         end 
     end
@@ -33,18 +37,12 @@ if string match -q "*sci.utah.edu" (hostname -f)
     end
     
     # SCI specific paths
-    for dir in /local/{,s}bin /sci-it/{s,}bin /local/ansible/{s,}bin
+    # note: a lot of things will get set up by Lmod modules; the /local dirs are my own 
+    #       personal preference 
+    for dir in /local/{,s}bin 
         if test -d $dir
             fish_add_path --global $dir
         end
-    end
-
-    # Ansible
-    if contains (hostname) $admin_hosts
-        # these are only needed on hosts Ansible is run from 
-        set -x ANSIBLE_KEEP_REMOTE_FILES 0
-        set -x ANSIBLE_REMOTE_TMP_CLEANUP yes
-        set -x ANSIBLE_LOCAL_TMP /tmp/ansible-local
     end
    
 end
