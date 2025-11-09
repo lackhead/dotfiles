@@ -51,13 +51,6 @@ function fish_prompt --description 'Write out the prompt'
     printf "@%s]" (prompt_hostname)
     set_color normal
 
-    # show venv indicator if active
-    if set -q VIRTUAL_ENV
-       set_color $fish_color_comment
-       printf " (venv)"
-    end
-    set_color normal
-
     # show possibly git info
     set -gx __fish_git_prompt_show_informative_status 1
     set -gx __fish_git_prompt_color $fish_color_host_remote
