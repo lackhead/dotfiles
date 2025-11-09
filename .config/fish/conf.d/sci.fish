@@ -4,7 +4,7 @@
 if string match -q "*sci.utah.edu" (hostname -f)
 
     # Some hosts get special treatment
-    set admin_hosts babylon babs
+    set admin_hosts babylon nineveh
 
     # A couple of rootly things
     if fish_is_root_user
