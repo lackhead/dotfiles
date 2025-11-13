@@ -6,9 +6,10 @@
 set -x LESS "-qeRiFX"
 
 # default editor
-for ed in subl nvim vim vi
+for ed in nvim vim vi
     if type -q $ed
         set -x EDITOR (command -v $ed)
+        set -x SYSTEMD_EDITOR (command -v $ed)
         break
     end
 end
