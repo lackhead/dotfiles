@@ -3,6 +3,12 @@
 #
 if string match -q "*sci.utah.edu" (hostname -f)
 
+    # Vault setup
+    if command -q vault
+        set -gx VAULT_ADDR 'https://vault.sci.utah.edu:8200'
+        abbr -a vlogin 'vault login -method=ldap username=$USER'
+    end
+
     # Some hosts get special treatment
     set admin_hosts babylon nineveh
 
